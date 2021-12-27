@@ -16,11 +16,12 @@ export default class Web3Container extends React.Component {
       const isadmin = await management.methods.isAdmin(accounts[0]).call()
 
       this.setState({ web3, accounts, tracking, management, isadmin })
-      
+
     } catch (error) {
       alert(
         `Failed to load web3, accounts, or contract. Check console for details.`
       )
+      alert(error)
       console.log(error)
     }
   }
