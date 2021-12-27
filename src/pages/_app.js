@@ -1,3 +1,4 @@
+import React from 'react'
 import Head from 'next/head';
 import { CacheProvider } from '@emotion/react';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
@@ -18,7 +19,14 @@ const App = (props) => {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
 
   const getLayout = Component.getLayout ?? ((page) => page);
+  React.useEffect(() => {
+    if (window.ethereum) {
+      window.ethereum.on('accountsChanged', (accounts) => {
+        window.location.reload();
+      });
+    }
 
+  }, [])
   return (
     <CacheProvider value={emotionCache}>
       <Head>
@@ -43,10 +51,20 @@ const App = (props) => {
 
             {/* {getLayout(<Component {...pageProps} skata="skata2" />)} */}
             <Web3Container
-              renderLoading={() => <InitialLoading />}
+              renderLoading={({ open, message }) => <InitialLoading open={open}
+                msg={message} />}
               render={({ web3, accounts, tracking, management, isadmin }) => (
-                <DashboardLayout accounts={accounts[0]} management={management} web3={web3} tracking={tracking} isadmin={isadmin} >
-                  <Component {...pageProps} accounts={accounts[0]} management={management} web3={web3} tracking={tracking} isadmin={isadmin} />
+                <DashboardLayout accounts={accounts[0]}
+                  management={management}
+                  web3={web3}
+                  tracking={tracking}
+                  isadmin={isadmin} >
+                  <Component {...pageProps}
+                    accounts={accounts[0]}
+                    management={management}
+                    web3={web3}
+                    tracking={tracking}
+                    isadmin={isadmin} />
                 </DashboardLayout>)}
             />
           </SnackbarProvider>
