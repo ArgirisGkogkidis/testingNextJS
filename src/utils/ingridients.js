@@ -1,0 +1,36 @@
+export default {
+    "data": {
+        "ingridients": [
+            {
+                "id": 1,
+                "name": "Ntomata",
+                "image": "URL"
+            },
+            {
+                "id": 2,
+                "name": "Aggouri",
+                "image": "URL"
+            },
+            {
+                "id": 3,
+                "name": "Marouli",
+                "image": "URL"
+            },
+            {
+                "id": 4,
+                "name": "Patata",
+                "image": "URL"
+            },
+            {
+                "id": 5,
+                "name": "Peper",
+                "image": "URL"
+            },
+            {
+                "id": 6,
+                "name": "Kremudi",
+                "image": "URL"
+            }
+        ]
+    }
+}
