@@ -99,7 +99,6 @@ export const LatestOrders = (props) => {
 
   React.useEffect(() => {
     setTokenData([])
-
     idCounter = 0
     const results2 = tracking.events._exposeMintedTokenHash({ fromBlock: 0, toBlock: 'latest' }, function (err, result) {
       if (err) {
@@ -121,9 +120,9 @@ export const LatestOrders = (props) => {
 
   async function initData(tokenHash, ingridientID, blockNumber) {
     const tknD = await tracking.methods.getTokenData(ingridientID, tokenHash).call()
-    console.log(tknD)
+
     const { timestamp } = await props.web3.eth.getBlock(blockNumber).then(result => result);
-    if (tknD[2] === accounts)
+    if (tknD[2] === accounts && idCounter <= 8) {
       setTokenData(prevPermisions => ([
         ...prevPermisions,
         {
@@ -137,6 +136,8 @@ export const LatestOrders = (props) => {
           status: tknD[0] == 1 ? 'ready' : (tknD[0] == 2 ? 'pending' : 'packed')
         }
       ]))
+      idCounter += 1
+    }
   }
 
   return (
@@ -149,10 +150,13 @@ export const LatestOrders = (props) => {
               <TableRow>
                 <TableCell>
                   Token Hash
-              </TableCell>
+                </TableCell>
                 <TableCell>
                   Token Type
-              </TableCell>
+                </TableCell>
+                <TableCell>
+                  Token Quantity
+                </TableCell>
                 <TableCell sortDirection="desc">
                   <Tooltip
                     enterDelay={300}
@@ -163,12 +167,12 @@ export const LatestOrders = (props) => {
                       direction="desc"
                     >
                       Date Minted
-                  </TableSortLabel>
+                    </TableSortLabel>
                   </Tooltip>
                 </TableCell>
                 <TableCell>
                   Status
-              </TableCell>
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -182,6 +186,9 @@ export const LatestOrders = (props) => {
                   </TableCell>
                   <TableCell>
                     {order.customer.name}
+                  </TableCell>
+                  <TableCell>
+                    {order.amount}
                   </TableCell>
                   <TableCell>
                     {format(order.createdAt, 'dd/MM/yyyy')}
@@ -215,7 +222,7 @@ export const LatestOrders = (props) => {
           variant="text"
         >
           View all
-      </Button>
+        </Button>
       </Box>
     </Card>
   )

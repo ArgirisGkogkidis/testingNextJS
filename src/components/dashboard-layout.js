@@ -39,20 +39,28 @@ export const DashboardLayout = (props) => {
         console.log(err)
         return;
       }
+      console.log(result)
 
       const owner = result.returnValues._receiver
       const tokenHash = result.returnValues._tokenHash
-
-      if (accounts === owner) {
-        enqueueSnackbar("Pending receive token", {
-          variant: 'info',
-          key: tokenHash,
-          persist: true,
-          action,
-        })
-      }
+      const ingridientID = result.returnValues._ingridientID
+      generateSnacks(ingridientID, tokenHash, owner)
     })
   }, [])
+
+  async function generateSnacks(ingridientID, tokenHash, owner) {
+
+    const tknD = await tracking.methods.getTokenData(ingridientID, tokenHash).call()
+    console.log(tknD)
+    if (accounts === owner && tknD[0] == 2 && tknD[2] != accounts) {
+      enqueueSnackbar("Pending receive token", {
+        variant: 'info',
+        key: tokenHash,
+        persist: true,
+        action,
+      })
+    }
+  }
 
   return (
     <>
