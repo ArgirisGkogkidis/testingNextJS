@@ -14,10 +14,10 @@ const InitialLoading = (props) => {
   const [open, setOpen] = React.useState(props.open);
   const [message, setMessage] = React.useState(props.msg);
 
-  React.useEffect(()=>{
+  React.useEffect(() => {
     setOpen(props.open)
     setMessage(props.msg)
-  },[props.open, props.msg])
+  }, [props.open, props.msg])
 
   const handleClose = () => {
     setOpen(false);
@@ -85,7 +85,8 @@ const InitialLoading = (props) => {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose} autoFocus>
+            <Button onClick={handleClose}
+              autoFocus>
               Got It
             </Button>
           </DialogActions>
