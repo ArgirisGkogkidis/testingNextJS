@@ -13,16 +13,16 @@ import {
   TextField,
   Typography
 } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import axios from 'axios'
 
-const Register = () => {
+const Register = (props) => {
+  console.log(props)
   const router = useRouter();
   const formik = useFormik({
     initialValues: {
       email: '',
       firstName: '',
       lastName: '',
-      password: '',
       policy: false
     },
     validationSchema: Yup.object({
@@ -43,11 +43,6 @@ const Register = () => {
         .max(255)
         .required(
           'Last name is required'),
-      password: Yup
-        .string()
-        .max(255)
-        .required(
-          'Password is required'),
       policy: Yup
         .boolean()
         .oneOf(
@@ -55,8 +50,20 @@ const Register = () => {
           'This field must be checked'
         )
     }),
-    onSubmit: () => {
-      router.push('/');
+    onSubmit: (values) => {
+      values['wallet'] = props.accounts
+
+      axios.post('http://127.0.0.1:4000/api/v1/register', values).then(response => {
+        window.location.reload();
+      })
+        .catch((reason) => {
+          if (reason.status === 400) {
+            // Handle 400
+          } else {
+            alert("skatoules ^ 2")
+          }
+          console.log(reason)
+        })
     }
   });
 
@@ -64,7 +71,7 @@ const Register = () => {
     <>
       <Head>
         <title>
-          Register | Material Kit
+          Register | Blockhain Supply Tracking
         </title>
       </Head>
       <Box
@@ -77,17 +84,6 @@ const Register = () => {
         }}
       >
         <Container maxWidth="sm">
-          <NextLink
-            href="/"
-            passHref
-          >
-            <Button
-              component="a"
-              startIcon={<ArrowBackIcon fontSize="small" />}
-            >
-              Dashboard
-            </Button>
-          </NextLink>
           <form onSubmit={formik.handleSubmit}>
             <Box sx={{ my: 3 }}>
               <Typography
@@ -141,19 +137,6 @@ const Register = () => {
               value={formik.values.email}
               variant="outlined"
             />
-            <TextField
-              error={Boolean(formik.touched.password && formik.errors.password)}
-              fullWidth
-              helperText={formik.touched.password && formik.errors.password}
-              label="Password"
-              margin="normal"
-              name="password"
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              type="password"
-              value={formik.values.password}
-              variant="outlined"
-            />
             <Box
               sx={{
                 alignItems: 'center',
@@ -203,24 +186,6 @@ const Register = () => {
                 Sign Up Now
               </Button>
             </Box>
-            <Typography
-              color="textSecondary"
-              variant="body2"
-            >
-              Have an account?
-              {' '}
-              <NextLink
-                href="/login"
-                passHref
-              >
-                <Link
-                  variant="subtitle2"
-                  underline="hover"
-                >
-                  Sign In
-                </Link>
-              </NextLink>
-            </Typography>
           </form>
         </Container>
       </Box>

@@ -9,8 +9,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
 const InitialLoading = (props) => {
-  console.log("loading screen")
-  console.log(props)
+
   const [open, setOpen] = React.useState(props.open);
   const [message, setMessage] = React.useState(props.msg);
 

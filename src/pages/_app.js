@@ -12,12 +12,13 @@ import Web3Container from '../utils/web3/Web3Container'
 import InitialLoading from '../components/custom-loading'
 import { SnackbarProvider } from 'notistack';
 import Slide from '@mui/material/Slide';
+import Register from './register'
 
 const clientSideEmotionCache = createEmotionCache();
 
 const App = (props) => {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
-
+  const isRegistered = false;
   const getLayout = Component.getLayout ?? ((page) => page);
   React.useEffect(() => {
     if (window.ethereum) {
@@ -27,6 +28,7 @@ const App = (props) => {
     }
 
   }, [])
+
   return (
     <CacheProvider value={emotionCache}>
       <Head>
@@ -49,23 +51,29 @@ const App = (props) => {
             }}
             TransitionComponent={Slide}>
 
-            {/* {getLayout(<Component {...pageProps} skata="skata2" />)} */}
+            {/* {getLayout(<Component {...pageProps} />)} */}
+
             <Web3Container
               renderLoading={({ open, message }) => <InitialLoading open={open}
                 msg={message} />}
-              render={({ web3, accounts, tracking, management, isadmin }) => (
-                <DashboardLayout accounts={accounts[0]}
-                  management={management}
-                  web3={web3}
-                  tracking={tracking}
-                  isadmin={isadmin} >
-                  <Component {...pageProps}
-                    accounts={accounts[0]}
-                    management={management}
-                    web3={web3}
-                    tracking={tracking}
-                    isadmin={isadmin} />
-                </DashboardLayout>)}
+              render={({ web3, accounts, tracking, management, isadmin, hasaccount }) => (
+                !hasaccount ? <Register accounts={accounts[0]}
+                web3={web3} /> :
+                  <>
+                    <DashboardLayout accounts={accounts[0]}
+                      management={management}
+                      web3={web3}
+                      tracking={tracking}
+                      isadmin={isadmin} >
+                      <Component {...pageProps}
+                        accounts={accounts[0]}
+                        management={management}
+                        web3={web3}
+                        tracking={tracking}
+                        isadmin={isadmin} />
+                    </DashboardLayout>
+                  </>
+              )}
             />
           </SnackbarProvider>
         </ThemeProvider>
