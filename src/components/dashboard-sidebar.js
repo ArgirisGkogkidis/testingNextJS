@@ -29,7 +29,7 @@ const adminNavigation = [
     title: 'User Managment'
   },
   {
-    href: '/products',
+    href: '/admin/ingridients',
     icon: (<ShoppingBagIcon fontSize="small" />),
     title: 'Ingridients'
   }]
@@ -50,7 +50,7 @@ const userNavigation = [
     title: 'Transfer Token'
   },
   {
-    href: '/user/receivetoken',
+    href: '/user/gettoken',
     icon: (<GetAppIcon fontSize="small" />),
     title: 'Receive Token'
   },

@@ -4,6 +4,8 @@ import { styled } from '@mui/material/styles';
 import { DashboardNavbar } from './dashboard-navbar';
 import { DashboardSidebar } from './dashboard-sidebar';
 import { useSnackbar } from 'notistack';
+import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 const DashboardLayoutRoot = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -20,13 +22,16 @@ export const DashboardLayout = (props) => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const { tracking, accounts } = props;
-
+  const router = useRouter();
   // customized
   const action = key => (
     <React.Fragment>
-      <Button onClick={() => { alert(`I belong to snackbar with key ${key}`); }}>
+      <Link href={`/user/gettoken/${key}`}>
         View Item
-      </Button>
+      </Link>
+      {/* <Button onClick={() => { alert(`I belong to snackbar with key ${key}`); }}>
+        View Item
+      </Button> */}
       <Button onClick={() => { closeSnackbar(key) }}>
         Dismiss
       </Button>
@@ -52,9 +57,13 @@ export const DashboardLayout = (props) => {
     const tknD = await tracking.methods.getTokenData(ingridientID, tokenHash).call()
 
     if (accounts === owner && tknD[0] == 2 && tknD[2] != accounts) {
+      const tokenLink = tokenHash + ":" + ingridientID
+
+      if (router.asPath.indexOf(tokenLink) != -1)
+        return
       enqueueSnackbar("Pending receive token", {
         variant: 'info',
-        key: tokenHash,
+        key: tokenLink,
         persist: true,
         action,
       })
