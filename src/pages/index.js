@@ -1,13 +1,13 @@
 import Head from 'next/head';
 import { Box, Container, Grid } from '@mui/material';
-import { LatestOrders } from '../components/dashboard/latest-orders';
+import { LatestTokens } from '../components/user/latest-tokens'
 import { LatestProducts } from '../components/dashboard/latest-products';
 import Router from 'next/router'
+import PendingTokens from 'src/components/user/pending-tokens';
 
 const Dashboard = (props) => {
 
-  if(props.isadmin)
-  {
+  if (props.isadmin) {
     Router.push('/admin')
   }
 
@@ -16,7 +16,7 @@ const Dashboard = (props) => {
       <Head>
         <title>
           Dashboard | Material Kit
-      </title>
+        </title>
       </Head>
       <Box
         component="main"
@@ -32,21 +32,21 @@ const Dashboard = (props) => {
           >
             <Grid
               item
-              lg={4}
-              md={6}
-              xl={3}
-              xs={12}
-            >
-              <LatestProducts sx={{ height: '100%' }} />
-            </Grid>
-            <Grid
-              item
-              lg={8}
+              lg={12}
               md={12}
               xl={9}
               xs={12}
             >
-              <LatestOrders {...props} />
+              <LatestTokens {...props} />
+            </Grid>
+            <Grid
+              item
+              lg={12}
+              md={12}
+              xl={9}
+              xs={12}
+            >
+              <PendingTokens {...props} />
             </Grid>
           </Grid>
         </Container>

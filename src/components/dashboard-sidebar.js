@@ -67,8 +67,8 @@ const userNavigation = [
 ];
 
 export const DashboardSidebar = (props) => {
-
   const { open, onClose } = props;
+  const user = props.user;
   const router = useRouter();
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'), {
     defaultMatches: true,
@@ -148,18 +148,19 @@ export const DashboardSidebar = (props) => {
                   color="neutral.400"
                   variant="body2"
                 >
-                  Your access
+                  Welcome
                   {' '}
-                  : {props.isadmin ? "Admin" : "User"}
+                  : {user.firstName} {' '} {user.lastName}
                 </Typography>
                 <Typography
                   color="neutral.400"
                   variant="body2"
                 >
-                  Your address
+                  Your access
                   {' '}
-                  : {props.accounts}
+                  : {props.isadmin ? "Admin" : "User"}
                 </Typography>
+
                 {props.isadmin ?
                   <>
                     <Typography

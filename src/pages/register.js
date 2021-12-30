@@ -16,7 +16,7 @@ import {
 import axios from 'axios'
 
 const Register = (props) => {
-  console.log(props)
+
   const router = useRouter();
   const formik = useFormik({
     initialValues: {
@@ -60,7 +60,7 @@ const Register = (props) => {
           if (reason.status === 400) {
             // Handle 400
           } else {
-            alert("skatoules ^ 2")
+            alert("failed error strange ^ 2")
           }
           console.log(reason)
         })

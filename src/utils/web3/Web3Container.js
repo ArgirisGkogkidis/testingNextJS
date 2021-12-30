@@ -6,7 +6,7 @@ import managementDefinition from '../contracts/Management.json'
 import axios from 'axios'
 
 export default class Web3Container extends React.Component {
-  state = { web3: null, accounts: null, tracking: null, management: null, isadmin: false, open: false, message: "", hasaccount: false };
+  state = { web3: null, accounts: null, tracking: null, management: null, isadmin: false, open: false, message: "", hasaccount: false, user:{} };
 
   async componentDidMount() {
     try {
@@ -18,8 +18,8 @@ export default class Web3Container extends React.Component {
 
       const data = await axios.get('https://blockchainbackendserver.herokuapp.com/api/v1/', {params: {wallet: accounts}});
       const hasaccount = data.data.data.user.length==1
-
-      this.setState({ web3, accounts, tracking, management, isadmin, hasaccount})
+      const user = data.data.data.user[0]
+      this.setState({ web3, accounts, tracking, management, isadmin, hasaccount, user})
 
     } catch (error) {
       this.setState({ open: true, message: `Failed to load web3, accounts, or contract. Check console for details.` })
@@ -28,9 +28,9 @@ export default class Web3Container extends React.Component {
   }
 
   render() {
-    const { web3, accounts, tracking, management, isadmin, open, message, hasaccount } = this.state
+    const { web3, accounts, tracking, management, isadmin, open, message, hasaccount, user } = this.state
     return web3 && accounts
-      ? this.props.render({ web3, accounts, tracking, management, isadmin, hasaccount })
+      ? this.props.render({ web3, accounts, tracking, management, isadmin, hasaccount, user })
       : this.props.renderLoading({ open, message })
   }
 }

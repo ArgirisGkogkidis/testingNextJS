@@ -56,7 +56,7 @@ const App = (props) => {
             <Web3Container
               renderLoading={({ open, message }) => <InitialLoading open={open}
                 msg={message} />}
-              render={({ web3, accounts, tracking, management, isadmin, hasaccount }) => (
+              render={({ web3, accounts, tracking, management, isadmin, hasaccount, user }) => (
                 !hasaccount ? <Register accounts={accounts[0]}
                 web3={web3} /> :
                   <>
@@ -64,13 +64,15 @@ const App = (props) => {
                       management={management}
                       web3={web3}
                       tracking={tracking}
-                      isadmin={isadmin} >
+                      isadmin={isadmin}
+                      user={user}>
                       <Component {...pageProps}
                         accounts={accounts[0]}
                         management={management}
                         web3={web3}
                         tracking={tracking}
-                        isadmin={isadmin} />
+                        isadmin={isadmin}
+                        user={user} />
                     </DashboardLayout>
                   </>
               )}

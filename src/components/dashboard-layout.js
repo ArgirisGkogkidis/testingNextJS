@@ -18,6 +18,7 @@ const DashboardLayoutRoot = styled('div')(({ theme }) => ({
 }));
 
 export const DashboardLayout = (props) => {
+
   const { children } = props;
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -93,6 +94,7 @@ export const DashboardLayout = (props) => {
         management={props.management}
         web3={props.web3}
         isadmin={props.isadmin}
+        user={props.user}
       />
     </>
   );

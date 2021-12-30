@@ -6,6 +6,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { Bell as BellIcon } from '../icons/bell';
 import { UserCircle as UserCircleIcon } from '../icons/user-circle';
 import { Users as UsersIcon } from '../icons/users';
+import NextLink from 'next/link';
 
 const DashboardNavbarRoot = styled(AppBar)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
@@ -62,16 +63,21 @@ export const DashboardNavbar = (props) => {
               </Badge>
             </IconButton>
           </Tooltip>
-          <Avatar
-            sx={{
-              height: 40,
-              width: 40,
-              ml: 1
-            }}
-            src="/static/images/avatars/avatar_1.png"
-          >
-            <UserCircleIcon fontSize="small" />
-          </Avatar>
+          <NextLink
+            href="/account"
+          ><a>
+              <Avatar
+                sx={{
+                  height: 40,
+                  width: 40,
+                  ml: 1
+                }}
+                src="/static/images/avatars/avatar_1.png"
+              >
+                <UserCircleIcon fontSize="small" />
+              </Avatar>
+            </a>
+          </NextLink>
         </Toolbar>
       </DashboardNavbarRoot>
     </>
