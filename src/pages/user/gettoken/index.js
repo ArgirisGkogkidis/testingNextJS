@@ -173,7 +173,7 @@ const ReceiveToken = (props) => {
 
                 </Tooltip>
               </>
-            ) : <>Skata</>}
+            ) : <>Test</>}
             <div style={{ height: 400, width: '100%' }}>
 
 
