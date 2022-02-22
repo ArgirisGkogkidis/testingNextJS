@@ -1,20 +1,10 @@
 import Head from 'next/head';
 import { Box, Container, Grid } from '@mui/material';
-import { LatestTokens } from '../components/user/latest-tokens'
-import { LatestProducts } from '../components/dashboard/latest-products';
-import Router from 'next/router'
+import { LatestTokens } from '../../components/user/latest-tokens'
+import { LatestProducts } from '../../components/dashboard/latest-products';
 import PendingTokens from 'src/components/user/pending-tokens';
 
 const Dashboard = (props) => {
-
-  if (props.isadmin) {
-    Router.push('/admin')
-  }
-  else
-  {
-    Router.push('/user')
-  }
-
   return (
     <>
       <Head>
@@ -29,7 +19,7 @@ const Dashboard = (props) => {
           py: 8
         }}
       >
-        <Container maxWidth={false}>
+        <Container maxWidth="lg">
           <Grid
             container
             spacing={3}
@@ -57,5 +47,11 @@ const Dashboard = (props) => {
       </Box>
     </>)
 }
+
+// Dashboard.getLayout = (page) => (
+//   <DashboardLayout>
+//     {page}
+//   </DashboardLayout>
+// );
 
 export default Dashboard;

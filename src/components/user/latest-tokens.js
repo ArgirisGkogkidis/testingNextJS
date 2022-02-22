@@ -82,7 +82,7 @@ export const LatestTokens = (props) => {
     <Card {...props}>
       <CardHeader title="Latest Tokens" />
       <PerfectScrollbar>
-        <Box sx={{ minWidth: 1200 }}>
+        <Box sx={{ minWidth: 100 }}>
           <Table>
             <TableHead>
               <TableRow>

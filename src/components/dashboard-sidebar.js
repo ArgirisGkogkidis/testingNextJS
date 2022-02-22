@@ -35,7 +35,7 @@ const adminNavigation = [
   }]
 const userNavigation = [
   {
-    href: '/',
+    href: '/user',
     icon: (<ChartBarIcon fontSize="small" />),
     title: 'Dashboard'
   },
