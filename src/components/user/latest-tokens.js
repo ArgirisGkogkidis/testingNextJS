@@ -48,7 +48,6 @@ export const LatestTokens = (props) => {
       const owner = result.returnValues.owner
       const tokenHash = result.returnValues.tokenhash
       const ingridientID = result.returnValues._ingridientID
-
       if (accounts === owner) {
         initData(tokenHash, ingridientID, result.blockNumber)
       }
@@ -57,21 +56,23 @@ export const LatestTokens = (props) => {
   }, [])
 
   async function initData(tokenHash, ingridientID, blockNumber) {
-    const tknD = await tracking.methods.getTokenData(ingridientID, tokenHash).call()
 
+    const haha = await tracking.methods.getIngridients(accounts).call()
+    const tknD = await tracking.methods.getTokenData(ingridientID, tokenHash).call()
     const { timestamp } = await props.web3.eth.getBlock(blockNumber).then(result => result);
-    if (tknD[2] === accounts && idCounter <= 8) {
+
+    if (tknD[3] === accounts && idCounter <= 8) {
       setTokenData(prevPermisions => ([
         ...prevPermisions,
         {
           id: uuid(),
           ref: tokenHash,
-          amount: tknD[1],
+          amount: tknD[2],
           customer: {
-            name: ingridients.data.ingridients[ingridientID].name
+            name: ingridients.data.ingridients[tknD[0]].name
           },
           createdAt: timestamp * 1000,
-          status: tknD[0] == 1 ? 'ready' : (tknD[0] == 2 ? 'pending' : 'packed')
+          status: tknD[1] == 1 ? 'ready' : (tknD[1] == 2 ? 'pending' : 'packed')
         }
       ]))
       idCounter += 1
