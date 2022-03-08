@@ -64,7 +64,7 @@ const Dapp = (props) => {
   };
 
   function runCheck() {
-    storeValue()
+    // storeValue()
     const { web3 } = props
     setPermisions([])
     if (!userEthAddress) {
