@@ -38982,10 +38982,16 @@
       "links": {},
       "address": "0xB03b417e60dE930E8B5ae140d9E0e6e20A445dF4",
       "transactionHash": "0x1fd1d1d946647511e25bd7b0e8ef244938e6dc46e0e8f54b52b829151f60e19c"
+    },
+    "1646724947901": {
+      "events": {},
+      "links": {},
+      "address": "0x59A26d366b9d69edC265807c47CF1270f7019788",
+      "transactionHash": "0xc15df074325425d8940136453197c207afa683550f964d27a030a44b36020ccf"
     }
   },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2022-02-22T18:45:05.962Z",
+  "updatedAt": "2022-03-08T07:48:50.068Z",
   "networkType": "ethereum",
   "devdoc": {
     "details": "Store & retrieve value in a variable",
