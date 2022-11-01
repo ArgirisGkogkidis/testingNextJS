@@ -22,7 +22,7 @@ export const DashboardLayout = (props) => {
   const { children } = props;
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-  const { tracking, accounts } = props;
+  const { tracking, accounts, web3 } = props;
   const router = useRouter();
   // customized
   const action = key => (
@@ -40,22 +40,25 @@ export const DashboardLayout = (props) => {
   );
 
   useEffect(() => {
-    const results2 = tracking.events._eTransferToken({ fromBlock: 0, toBlock: 'latest' }, function (err, result) {
-      if (err) {
-        console.log(err)
-        return;
-      }
+    console.log("REE")
 
-      const owner = result.returnValues._receiver
-      const tokenHash = result.returnValues._tokenHash
-      const ingridientID = result.returnValues._ingridientID
-      generateSnacks(ingridientID, tokenHash, owner)
-    })
+    // const results2 = tracking.events._eTransferToken({ fromBlock: 'latest'-2000 , toBlock: 'latest' }, function (err, result) {
+    //   if (err) {
+    //     console.log(err)
+    //     return;
+    //   }
+
+    //   const owner = result.returnValues._receiver
+    //   const tokenHash = result.returnValues._tokenHash
+    //   const ingridientID = result.returnValues._ingridientID
+    //   generateSnacks(ingridientID, tokenHash, owner)
+    // })
+
   }, [tracking.events])
 
   async function generateSnacks(ingridientID, tokenHash, owner) {
 
-    const tknD = await tracking.methods.getTokenData(ingridientID, tokenHash).call()
+    const tknD = await tracking.methods.getTokenData(tokenHash).call()
 
     if (accounts === owner && tknD[0] == 2 && tknD[2] != accounts) {
       const tokenLink = tokenHash + ":" + ingridientID

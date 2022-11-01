@@ -51,12 +51,6 @@ const Dapp = (props) => {
     setUserIngredient(value)
   }
 
-  async function storeValue() {
-    const { accounts, management, tracking } = props
-    // await management.methods.set(5).send({ from: accounts[0] })
-    await tracking.methods.set_management_sc(management.options.address).send({ from: accounts });
-  };
-
   async function getEthBalance() {
     const { web3, accounts } = props
     const balanceInWei = await web3.eth.getBalance(accounts)
@@ -64,7 +58,6 @@ const Dapp = (props) => {
   };
 
   function runCheck() {
-    storeValue()
     const { web3 } = props
     setPermisions([])
     if (!userEthAddress) {

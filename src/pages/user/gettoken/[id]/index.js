@@ -31,7 +31,7 @@ const TokenToReceive = (props) => {
 
   async function generateSnacks() {
 
-    const tknD = await tracking.methods.getTokenData(ingridientID, tokenHash).call()
+    const tknD = await tracking.methods.getTokenData(tokenHash).call()
 
     setTokenData({
       tokenStatus: tknD[0],

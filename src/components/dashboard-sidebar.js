@@ -32,6 +32,11 @@ const adminNavigation = [
     href: '/admin/ingridients',
     icon: (<ShoppingBagIcon fontSize="small" />),
     title: 'Ingridients'
+  },
+  {
+    href: '/admin/manage',
+    icon: (<ShoppingBagIcon fontSize="small" />),
+    title: 'Set contract access'
   }]
 const userNavigation = [
   {
@@ -43,21 +48,6 @@ const userNavigation = [
     href: '/user/minttoken',
     icon: (<DataSaverOnIcon />),
     title: 'Mint Token'
-  },
-  {
-    href: '/user/transfertoken',
-    icon: (<SendIcon fontSize="small" />),
-    title: 'Transfer Token'
-  },
-  {
-    href: '/user/gettoken',
-    icon: (<GetAppIcon fontSize="small" />),
-    title: 'Receive Token'
-  },
-  {
-    href: '/user/splittoken',
-    icon: (<HorizontalSplitIcon fontSize="small" />),
-    title: 'Split Token'
   },
   {
     href: '/404',

@@ -3,6 +3,7 @@ import { Box, Container, Grid } from '@mui/material';
 import { LatestTokens } from '../../components/user/latest-tokens'
 import { LatestProducts } from '../../components/dashboard/latest-products';
 import PendingTokens from 'src/components/user/pending-tokens';
+import PerfectScrollbar from 'react-perfect-scrollbar';
 
 const Dashboard = (props) => {
   return (
@@ -23,16 +24,18 @@ const Dashboard = (props) => {
           <Grid
             container
             spacing={3}
+            justify="flex-start"
+            alignItems="center"
           >
-            <Grid
+            {/* <Grid
               item
               lg={12}
               md={12}
               xl={9}
               xs={12}
-            >
+            > */}
               <LatestTokens {...props} />
-            </Grid>
+            {/* </Grid> */}
             <Grid
               item
               lg={12}

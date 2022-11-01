@@ -100,7 +100,11 @@ export const LatestOrders = (props) => {
   React.useEffect(() => {
     setTokenData([])
     idCounter = 0
-    const results2 = tracking.events._exposeMintedTokenHash({ fromBlock: 0, toBlock: 'latest' }, function (err, result) {
+    console.log("REEE222")
+    tracking.getPastEvents('_exposeMintedTokenHash').then(events => {
+      console.log(events)
+      console.log(events.returnValues)})
+    const results2 = tracking.events._exposeMintedTokenHash({ fromBlock: 15025246 }, function (err, result) {
       if (err) {
         console.log(err)
         return;
@@ -119,7 +123,7 @@ export const LatestOrders = (props) => {
   }, [])
 
   async function initData(tokenHash, ingridientID, blockNumber) {
-    const tknD = await tracking.methods.getTokenData(ingridientID, tokenHash).call()
+    const tknD = await tracking.methods.getTokenData(tokenHash).call()
 
     const { timestamp } = await props.web3.eth.getBlock(blockNumber).then(result => result);
     if (tknD[2] === accounts && idCounter <= 8) {

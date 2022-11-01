@@ -35,7 +35,7 @@ const MintToken = (props) => {
         const tokenHash = rs.events._exposeMintedTokenHash.returnValues.tokenhash
         console.log(tokenHash)
 
-        const tokenData = await tracking.methods.getTokenData(tokenIdToMint, tokenHash).call()
+        const tokenData = await tracking.methods.getTokenData(tokenHash).call()
         console.log(tokenData)
     }
 

@@ -1,24 +1,19 @@
 import React from 'react'
 import { format } from 'date-fns';
 import { v4 as uuid } from 'uuid';
-import PerfectScrollbar from 'react-perfect-scrollbar';
 import {
-  Box,
   Button,
   Card,
+  CardMedia,
+  CardContent,
+  CardActions,
+  Grid,
   CardHeader,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  TableSortLabel,
-  Tooltip
+  Typography
 } from '@mui/material';
-import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import { SeverityPill } from '../severity-pill';
 import ingridients from '../../utils/ingridients'
-
+import Link from 'next/link'
 
 export const LatestTokens = (props) => {
 
@@ -33,136 +28,101 @@ export const LatestTokens = (props) => {
     createdAt: 1555016400000,
     status: 'pending'
   },])
-  let idCounter = 0;
 
   React.useEffect(() => {
     setTokenData([])
-    idCounter = 0
-    const results2 = tracking.events._exposeMintedTokenHash({ fromBlock: 0, toBlock: 'latest' }, function (err, result) {
-      if (err) {
-        console.log(err)
-        return;
-      }
-      // console.log('rs')
-      // console.log(result)
-      const owner = result.returnValues.owner
-      const tokenHash = result.returnValues.tokenhash
-      const ingridientID = result.returnValues._ingridientID
-      if (accounts === owner) {
-        initData(tokenHash, ingridientID, result.blockNumber)
-      }
-    })
 
+    initData()
   }, [])
 
-  async function initData(tokenHash, ingridientID, blockNumber) {
+  async function initData() {//tokenHash, ingridientID, blockNumber) {
+    // const data = await axios.get('http://127.0.0.1:4000/api/v1/events/mint/'+accounts)
+    // console.log(data)
+    const userTokens = await tracking.methods.getUserTokens(accounts).call()
 
-    const haha = await tracking.methods.getIngridients(accounts).call()
-    const tknD = await tracking.methods.getTokenData(ingridientID, tokenHash).call()
-    const { timestamp } = await props.web3.eth.getBlock(blockNumber).then(result => result);
+    // const tknD = [] //await tracking.methods.getTokenData(ingridientID, tokenHash).call()
+    // const { timestamp } = await props.web3.eth.getBlock(15062748).then(result => result);
 
-    if (tknD[3] === accounts && idCounter <= 8) {
+    // userTokens.forEach((uToken) =>
+    for (let uToken of userTokens) {
+      if (uToken == '0x0000000000000000000000000000000000000000000000000000000000000000') {
+        continue
+      }
+      const tknD = await tracking.methods.getTokenData(uToken).call()
+      if (tknD[3] === accounts)
+        console.log(tknD)
       setTokenData(prevPermisions => ([
         ...prevPermisions,
         {
           id: uuid(),
-          ref: tokenHash,
+          ref: uToken,
           amount: tknD[2],
           customer: {
             name: ingridients.data.ingridients[tknD[0]].name
           },
-          createdAt: timestamp * 1000,
+          createdAt: Number(tknD[6] * 1000),
           status: tknD[1] == 1 ? 'ready' : (tknD[1] == 2 ? 'pending' : 'packed')
         }
       ]))
-      idCounter += 1
     }
+
+  }
+
+  const [open, setOpen] = React.useState(false);
+
+  function openFromParent() {
+    setOpen(true);
+  }
+
+  function handleCloseModal(event, data) {
+    console.log(event, data);
+    setOpen(false);
   }
 
   return (
-    <Card {...props}>
-      <CardHeader title="Latest Tokens" />
-      <PerfectScrollbar>
-        <Box sx={{ minWidth: 100 }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>
-                  Token Hash
-                </TableCell>
-                <TableCell>
-                  Token Type
-                </TableCell>
-                <TableCell>
-                  Token Quantity
-                </TableCell>
-                <TableCell sortDirection="desc">
-                  <Tooltip
-                    enterDelay={300}
-                    title="Sort"
-                  >
-                    <TableSortLabel
-                      active
-                      direction="desc"
-                    >
-                      Date Minted
-                    </TableSortLabel>
-                  </Tooltip>
-                </TableCell>
-                <TableCell>
-                  Status
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {tokenData.map((order) => (
-                <TableRow
-                  hover
-                  key={order.id}
-                >
-                  <TableCell>
-                    {order.ref}
-                  </TableCell>
-                  <TableCell>
-                    {order.customer.name}
-                  </TableCell>
-                  <TableCell>
-                    {order.amount}
-                  </TableCell>
-                  <TableCell>
-                    {format(order.createdAt, 'dd/MM/yyyy')}
-                  </TableCell>
-                  <TableCell>
-                    <SeverityPill
-                      color={(order.status === 'ready' && 'success')
-                        || (order.status === 'packed' && 'error')
-                        || 'warning'}
-                    >
-                      {order.status}
-                    </SeverityPill>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Box>
-      </PerfectScrollbar>
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'flex-end',
-          p: 2
-        }}
+    <>{tokenData.map((order) => (
+      <Grid
+        item
+        xs={12}
+        md={3}
+        lg={4}
+        xl={4}
+        key={order.id}
       >
-        <Button
-          color="primary"
-          endIcon={<ArrowRightIcon fontSize="small" />}
-          size="small"
-          variant="text"
-        >
-          View all
-        </Button>
-      </Box>
-    </Card>
+        <Card {...props} sx={{ maxWidth: 345 }}>
+          <CardMedia
+            component="img"
+            alt="tomato"
+            height="140"
+            image="https://cdn-icons-png.flaticon.com/512/1202/1202125.png?w=164&h=164&fit=crop&auto=format"
+          />
+          <CardContent>
+            <Typography gutterBottom variant="h5" component="div">
+              {order.customer.name}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {order.ref}<br></br>
+              Ποσότητα: {order.amount}<br></br>
+              Δημιουργήθηκε : {format(order.createdAt, 'HH:mm:ss dd/MM/yyyy')}<br></br>
+              Κατάσταση:
+              <SeverityPill
+                color={(order.status === 'ready' && 'success')
+                  || (order.status === 'packed' && 'error')
+                  || 'warning'}
+              >
+                {order.status}
+              </SeverityPill>
+
+            </Typography>
+          </CardContent>
+          <CardActions>
+            <Link href={{ pathname: '/user/split/' + order.ref, props }}> Split</Link>
+            {/* <Button size="small" >Transfer</Button> */}
+            <Link href={{ pathname: '/user/transfer/' + order.ref, props }}> Transfer</Link>
+          </CardActions>
+        </Card>
+      </Grid>
+    ))}
+    </>
   )
 };

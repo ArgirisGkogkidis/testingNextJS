@@ -39,46 +39,53 @@ const PendingTokens = (props) => {
     setDataRows([])
     setLoading(true)
     idCounter = 0
-    const results2 = tracking.events._eTransferToken({ fromBlock: 0, toBlock: 'latest' }, function (err, result) {
-      if (err) {
-        console.log(err)
-        return;
-      }
+    // const results2 = tracking.events._eTransferToken({ fromBlock: 15025246 }, function (err, result) {
+    //   if (err) {
+    //     console.log(err)
+    //     return;
+    //   }
 
-      const owner = result.returnValues._receiver
-      const tokenHash = result.returnValues._tokenHash
-      const ingridientID = result.returnValues._ingridientID
+    //   const owner = result.returnValues._receiver
+    //   const tokenHash = result.returnValues._tokenHash
+    //   const ingridientID = result.returnValues._ingridientID
 
-      if (accounts === owner) {
-        initData(tokenHash, ingridientID)
-      }
-    })
+    //   if (accounts === owner) {
+    //     initData(tokenHash, ingridientID)
+    //   }
+    // })
+    initData()
     setTimeout(() => {
       setLoading(false)
     }, 5000)
   }, [])
 
-  async function initData(tokenHash, ingridientID) {
-    const tknD = await tracking.methods.getTokenData(ingridientID, tokenHash).call()
-    console.log("token data")
-    console.log(tknD)
-    if (tknD[0] == 2) {
-      setTokenData(prevPermisions => ([
-        ...prevPermisions,
-        {
-          tokenHash: tokenHash,
-          ingridientID: ingridientID
-        }
-      ]))
-      idCounter += 1
+  //tokenHash, ingridientID
+  async function initData() {
 
-      const data = await axios.get('https://blockchainbackendserver.herokuapp.com/api/v1/', {params: {wallet: tknD[2]}});
-      const user = data.data.data.user[0]
-      const userName = user.firstName + " " + user.lastName
-      setDataRows((previousRow) => [...previousRow, { id: idCounter, tokenhash: tokenHash, tokenid: ingridientID, tokensender: userName, tokenquantity: tknD[1] }])
-      console.log(dataRows)
+    const pendingTokens = await tracking.methods.getUserPendingTokens(accounts).call()
+    for (let i in pendingTokens) {
+      let pendingToken = pendingTokens[i]
+      if (pendingToken == '0x0000000000000000000000000000000000000000000000000000000000000000')
+        continue
+      const tknD = await tracking.methods.getTokenData(pendingToken).call()
+      console.log("token data")
+      console.log(tknD)
+      if (tknD[1] == 2) {
+        setTokenData(prevPermisions => ([
+          ...prevPermisions,
+          {
+            tokenHash: pendingToken,
+            ingridientID: tknD[0]
+          }
+        ]))
+        idCounter += 1
+
+        const data = await axios.get('https://blockchainbackendserver.herokuapp.com/api/v1/', { params: { wallet: tknD[3] } });
+        const user = data.data.data.user[0]
+        const userName = user.firstName + " " + user.lastName
+        setDataRows((previousRow) => [...previousRow, { id: idCounter, tokenhash: pendingToken, tokenid: tknD[0], tokensender: userName, tokenquantity: tknD[1] }])
+      }
     }
-
   }
 
   async function acceptToken() {
@@ -86,15 +93,6 @@ const PendingTokens = (props) => {
       alert("Need an Ethereum address to check")
       return;
     }
-    // for (let posID in selectionModel) {
-    //     console.log(dataRows[posID])
-    //     const ingridientID = dataRows[posID].id
-    //     const tokenHash = dataRows[posID].tokenhash
-
-    //     console.log(ingridientID, tokenHash)
-    //     const rs = await tracking.methods.receive_token(ingridientID, tokenHash).send({ from: accounts });
-    //     console.log(rs)
-    // }
 
     const _ingridientID = []
     const _tokenHash = []

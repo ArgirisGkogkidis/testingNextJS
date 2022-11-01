@@ -40,13 +40,6 @@ const MintToken = (props) => {
 
         const packHash = rs.events._exposePackHash.returnValues.packHash
         console.log("packHash:", packHash)
-
-
-        // const tokenHash = rs.events._exposeMintedTokenHash.returnValues.tokenhash
-        // console.log(tokenHash)
-
-        // const tokenData = await tracking.methods.getTokenData(tokenIdToMint, tokenHash).call()
-        // console.log(tokenData)
     }
 
     return (
