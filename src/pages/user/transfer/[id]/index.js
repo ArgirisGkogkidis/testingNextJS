@@ -117,7 +117,7 @@ const TransferToken = (props) => {
                                             onChange={handleChange}
                                         >
                                             {userData.map((user) => (
-                                                <option value={user.wallet}>{user.fullName}</option>
+                                                <option key={user.uuid} value={user.wallet}>{user.fullName}</option>
                                             ))}
                                         </NativeSelect>
                                     </Box>
