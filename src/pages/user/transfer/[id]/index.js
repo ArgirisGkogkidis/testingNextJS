@@ -41,7 +41,7 @@ const TransferToken = (props) => {
             return;
         }
 
-        const rs = await tracking.methods.transfer_token(0, id, receiverAddress).send({ from: accounts });
+        const rs = await tracking.methods.transfer_token(id, receiverAddress).send({ from: accounts });
     }
 
     async function initData() {

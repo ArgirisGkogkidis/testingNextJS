@@ -30,13 +30,11 @@ const MintToken = (props) => {
         }
 
         // await contract.methods.mint_token(tokenIdToMint, tokenQuantity).send({ from: props.account });
-        const rs = await tracking.methods.mint_token(tokenIdToMint, tokenQuantity).send({ from: accounts });
-        // console.log(rs);
-        const tokenHash = rs.events._exposeMintedTokenHash.returnValues.tokenhash
-        console.log(tokenHash)
-
-        const tokenData = await tracking.methods.getTokenData(tokenHash).call()
-        console.log(tokenData)
+        const rs = await tracking.methods.mint_token(tokenIdToMint, Number(tokenQuantity)).send({ from: accounts });
+        console.log(rs);
+  
+        // const tokenData = await tracking.methods.getTokenData(tokenHash).call()
+        // console.log(tokenData)
     }
 
     return (

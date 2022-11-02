@@ -3,33 +3,33 @@ export default {
         "ingridients": [
             {
                 "id": 1,
-                "name": "Ntomata",
-                "image": "URL"
+                "name": "Ντομάτα",
+                "image": "/static/images/products/tomato.png"
             },
             {
                 "id": 2,
-                "name": "Aggouri",
-                "image": "URL"
+                "name": "Αγγούρι",
+                "image": "/static/images/products/cucumber.png"
             },
             {
                 "id": 3,
-                "name": "Marouli",
-                "image": "URL"
+                "name": "Μαρούλι",
+                "image": "/static/images/products/lettuce.png"
             },
             {
                 "id": 4,
-                "name": "Patata",
-                "image": "URL"
+                "name": "Πατάτα",
+                "image": "/static/images/products/potato.png"
             },
             {
                 "id": 5,
-                "name": "Peper",
-                "image": "URL"
+                "name": "Πιπεριά",
+                "image": "/static/images/products/pepper.png"
             },
             {
                 "id": 6,
-                "name": "Kremudi",
-                "image": "URL"
+                "name": "Κρεμμύδι",
+                "image": "/static/images/products/onion.png"
             }
         ]
     }

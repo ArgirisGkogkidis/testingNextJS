@@ -1,16 +1,14 @@
 import Head from 'next/head';
 import { Box, Container, Grid } from '@mui/material';
-import { LatestTokens } from '../../components/user/latest-tokens'
-import { LatestProducts } from '../../components/dashboard/latest-products';
-import PendingTokens from 'src/components/user/pending-tokens';
-import PerfectScrollbar from 'react-perfect-scrollbar';
+import { UserPacks } from '../../components/user/pack'
 
-const Dashboard = (props) => {
+
+const viewPack = (props) => {
   return (
     <>
       <Head>
         <title>
-          Dashboard | Material Kit
+          View Pack | Material Kit
         </title>
       </Head>
       <Box
@@ -34,16 +32,7 @@ const Dashboard = (props) => {
               xl={9}
               xs={12}
             >
-              <LatestTokens {...props} />
-            </Grid>
-            <Grid
-              item
-              lg={12}
-              md={12}
-              xl={9}
-              xs={12}
-            >
-              <PendingTokens {...props} />
+              <UserPacks {...props} />
             </Grid>
           </Grid>
         </Container>
@@ -52,4 +41,4 @@ const Dashboard = (props) => {
 }
 
 
-export default Dashboard;
+export default viewPack;

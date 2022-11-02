@@ -39,20 +39,7 @@ const ReceiveToken = (props) => {
     setDataRows([])
     setLoading(true)
     idCounter = 0
-    // const results2 = tracking.events._eTransferToken({ fromBlock: 14696686 }, function (err, result) {
-    //   if (err) {
-    //     console.log(err)
-    //     return;
-    //   }
 
-    //   const owner = result.returnValues._receiver
-    //   const tokenHash = result.returnValues._tokenHash
-    //   const ingridientID = result.returnValues._ingridientID
-
-    //   if (accounts === owner) {
-    //     initData(tokenHash, ingridientID)
-    //   }
-    // })
     setTimeout(() => {
       setLoading(false)
     }, 5000)
@@ -108,9 +95,9 @@ const ReceiveToken = (props) => {
     // const tokenHash = props.token.tokenHash
     const rs = null
     if (_ingridientID.length == 1)
-      rs = await tracking.methods.receive_token(_ingridientID[0], _tokenHash[0]).send({ from: accounts });
+      rs = await tracking.methods.receive_token(_tokenHash[0]).send({ from: accounts });
     else
-      rs = await tracking.methods.receive_tokens(_ingridientID, _tokenHash).send({ from: accounts });
+      rs = await tracking.methods.receive_tokens(_tokenHash).send({ from: accounts });
 
     console.log("result", rs)
   }

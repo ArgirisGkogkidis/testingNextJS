@@ -110,9 +110,9 @@ const PendingTokens = (props) => {
     // const tokenHash = props.token.tokenHash
     const rs = null
     if (_ingridientID.length == 1)
-      rs = await tracking.methods.receive_token(_ingridientID[0], _tokenHash[0]).send({ from: accounts });
+      rs = await tracking.methods.receive_token(_tokenHash[0]).send({ from: accounts });
     else
-      rs = await tracking.methods.receive_tokens(_ingridientID, _tokenHash).send({ from: accounts });
+      rs = await tracking.methods.receive_tokens(_tokenHash).send({ from: accounts });
 
     console.log("result", rs)
   }

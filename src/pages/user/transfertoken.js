@@ -34,7 +34,7 @@ const TransferToken = (props) => {
             return;
         }
 
-        const rs = await tracking.methods.transfer_token(tokenIdToTransfer,tokenIdToMint, tokenQuantity).send({ from: accounts });
+        const rs = await tracking.methods.transfer_token(tokenIdToMint, tokenQuantity).send({ from: accounts });
     }
 
     return (

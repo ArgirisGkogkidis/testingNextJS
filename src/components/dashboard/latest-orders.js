@@ -100,25 +100,6 @@ export const LatestOrders = (props) => {
   React.useEffect(() => {
     setTokenData([])
     idCounter = 0
-    console.log("REEE222")
-    tracking.getPastEvents('_exposeMintedTokenHash').then(events => {
-      console.log(events)
-      console.log(events.returnValues)})
-    const results2 = tracking.events._exposeMintedTokenHash({ fromBlock: 15025246 }, function (err, result) {
-      if (err) {
-        console.log(err)
-        return;
-      }
-      // console.log('rs')
-      // console.log(result)
-      const owner = result.returnValues.owner
-      const tokenHash = result.returnValues.tokenhash
-      const ingridientID = result.returnValues._ingridientID
-
-      if (accounts === owner) {
-        initData(tokenHash, ingridientID, result.blockNumber)
-      }
-    })
 
   }, [])
 

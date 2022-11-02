@@ -50,6 +50,16 @@ const userNavigation = [
     title: 'Mint Token'
   },
   {
+    href: '/user/pack',
+    icon: (<DataSaverOnIcon />),
+    title: 'Pack Token'
+  },
+  {
+    href:'/user/viewpack',
+    icon: (<DataSaverOnIcon />),
+    title: 'My Packs'
+  },
+  {
     href: '/404',
     icon: (<XCircleIcon fontSize="small" />),
     title: 'Error'
