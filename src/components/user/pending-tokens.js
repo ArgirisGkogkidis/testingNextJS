@@ -101,15 +101,6 @@ const PendingTokens = (props) => {
       alert("Need an Ethereum address to check")
       return;
     }
-    // for (let posID in selectionModel) {
-    //     console.log(dataRows[posID])
-    //     const ingridientID = dataRows[posID].id
-    //     const tokenHash = dataRows[posID].tokenhash
-
-    //     console.log(ingridientID, tokenHash)
-    //     const rs = await tracking.methods.receive_token(ingridientID, tokenHash).send({ from: accounts });
-    //     console.log(rs)
-    // }
 
     const _tokenHashes = []
 
@@ -130,6 +121,7 @@ const PendingTokens = (props) => {
 
     console.log("result", rs)
     fetchTokens()
+    props.onTokenAccepted();
   }
 
   const renderTokensToReceive = Object.values(tokenData).map((tkn) => {

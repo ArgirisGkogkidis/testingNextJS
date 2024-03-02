@@ -1,13 +1,23 @@
 {
-  "extends": "next/core-web-vitals",
+  "extends": [
+    "next/core-web-vitals",
+    "plugin:prettier/recommended"
+  ],
   "rules": {
     "@next/next/no-img-element": "off",
     "jsx-a11y/alt-text": "off",
     "react/display-name": "off",
+    "react-hooks/exhaustive-deps": "off",
     "react/jsx-max-props-per-line": [
       1,
       {
         "maximum": 1
+      }
+    ],
+    "prettier/prettier": [
+      "error",
+      {
+        "endOfLine": "auto"
       }
     ]
   }

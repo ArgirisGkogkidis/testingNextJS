@@ -33,6 +33,7 @@ export const ProductListToolbar = (props) => (
         <Button
           color="primary"
           variant="contained"
+          onClick={() => props.handleOpenTransferModal()}
         >
           Add ingridient
         </Button>

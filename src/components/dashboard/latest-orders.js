@@ -17,7 +17,7 @@ import {
 } from '@mui/material';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import { SeverityPill } from '../severity-pill';
-import ingridients from '../../utils/ingridients'
+import ingridients from '../../utils/ingredients'
 
 const orders = [
   {
@@ -130,7 +130,7 @@ export const LatestOrders = (props) => {
           ref: tokenHash,
           amount: tknD[1],
           customer: {
-            name: ingridients.data.ingridients[ingridientID].name
+            name: ingridients.data.ingredient[ingridientID].name
           },
           createdAt: timestamp * 1000,
           status: tknD[0] == 1 ? 'ready' : (tknD[0] == 2 ? 'pending' : 'packed')

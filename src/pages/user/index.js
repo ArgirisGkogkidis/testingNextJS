@@ -1,10 +1,34 @@
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { Box, Container, Grid } from '@mui/material';
-import { LatestTokens } from '../../components/user/latest-tokens'
-import { LatestProducts } from '../../components/dashboard/latest-products';
+import { LatestTokens } from '../../components/user/latest-tokens';
 import PendingTokens from 'src/components/user/pending-tokens';
 
 const Dashboard = (props) => {
+  const [refreshTokens, setRefreshTokens] = useState(false);
+  const [userPerms, setUserPerms] = useState({});
+
+  // Function to toggle the refresh state
+  const triggerRefresh = () => {
+    setRefreshTokens(prev => !prev);
+  };
+
+  useEffect(() => {
+    const fetchUserPerms = async () => {
+      const perms = await props.management.methods.get_user_perms(props.accounts).call();
+      setUserPerms({
+        canMint: perms.canMint,
+        canPack: perms.canPack,
+        canReceive: perms.canReceive,
+        canSplit: perms.canSplit,
+        canTransfer: perms.canTransfer
+      });
+    };
+
+    fetchUserPerms();
+  }, [props.management, props.accounts]);
+
+
   return (
     <>
       <Head>
@@ -31,7 +55,7 @@ const Dashboard = (props) => {
               xl={9}
               xs={12}
             >
-              <LatestTokens {...props} />
+              <LatestTokens {...props} refreshTokens={refreshTokens} onRefreshComplete={triggerRefresh} userPerms={userPerms} />
             </Grid>
             <Grid
               item
@@ -40,18 +64,12 @@ const Dashboard = (props) => {
               xl={9}
               xs={12}
             >
-              <PendingTokens {...props} />
+              <PendingTokens {...props} onTokenAccepted={triggerRefresh} userPerms={userPerms} />
             </Grid>
           </Grid>
         </Container>
       </Box>
     </>)
 }
-
-// Dashboard.getLayout = (page) => (
-//   <DashboardLayout>
-//     {page}
-//   </DashboardLayout>
-// );
 
 export default Dashboard;

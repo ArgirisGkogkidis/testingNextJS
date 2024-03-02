@@ -19,13 +19,13 @@ import {
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import { SeverityPill } from '../severity-pill';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import ingridients from '../../utils/ingridients'
+import ingredients from '../../utils/ingredients'
 import TransferModal from './actions/transfer-token';
 import SplitModal from './actions/split-token';
 
 export const LatestTokens = (props) => {
 
-  const { tracking, accounts } = props
+  const { tracking, accounts, userPerms } = props
   const [tokenData, setTokenData] = React.useState([{
     id: uuid(),
     ref: 'CDD1049',
@@ -48,8 +48,9 @@ export const LatestTokens = (props) => {
   let idCounter = 0;
 
   React.useEffect(() => {
-    fetchTokens()
-  }, [])
+    // Call fetchLatestTokens and wait for it to complete before calling onRefreshComplete
+    fetchTokens();
+  }, [props.refreshTokens, userPerms]);
 
   const fetchTokens = async () => {
     setTokenData([]); // Reset token data before fetching new data
@@ -67,21 +68,29 @@ export const LatestTokens = (props) => {
       return; // Skip this iteration and continue with the next loop iteration
     }
     const tknD = await tracking.methods.getTokenData(tokenHash).call()
-    console.log(Number(tknD[1]) === 1 ? 'ready' : (Number(tknD[1]) == 2 ? 'transfered' : 'packed'));
+
+    // Assuming userPerms is available in your component's state or props
+    const hasTransferPermission = userPerms?.canTransfer ?? false;
+    const hasSplitPermission = userPerms?.canSplit ?? false;
+
+    console.log('yolo', ...(Number(tknD[1]) === 1 && hasTransferPermission ? ['Transfer'] : []));
     if (tknD[3] === accounts && idCounter <= 8) {
       setTokenData(prevPermisions => ([
         ...prevPermisions,
         {
           id: uuid(),
           ref: tokenHash,
-          ingridient: Number(tknD[0]),
+          ingredient: Number(tknD[0]),
           amount: tknD[2],
           customer: {
-            name: ingridients.data.ingridients[tknD[0]].name
+            name: ingredients.data.ingredient[tknD[0]].name
           },
           createdAt: tknD[6] * 1000,
           status: Number(tknD[1]) === 1 ? 'ready' : (Number(tknD[1]) == 2 ? 'transfered' : 'packed'),
-          actions: Number(tknD[1]) === 1 ? ['Transfer', 'Split'] : [] // Dynamic actions based on status
+          actions: [
+            ...(Number(tknD[1]) === 1 && hasTransferPermission ? ['Transfer'] : []),
+            ...(Number(tknD[1]) === 1 && hasSplitPermission ? ['Split'] : [])
+          ]
         }
       ]))
       idCounter += 1
@@ -144,7 +153,7 @@ export const LatestTokens = (props) => {
       alert("Need an Ethereum address to check")
       return;
     }
-    const rs = await tracking.methods.split_token(selectedToken.ingridient, selectedToken.ref, newAmount).send({ from: accounts });
+    const rs = await tracking.methods.split_token(selectedToken.ingredient, selectedToken.ref, newAmount).send({ from: accounts });
     fetchTokens();
     handleCloseSplitModal();
   };
@@ -164,7 +173,7 @@ export const LatestTokens = (props) => {
       <Card {...props}>
         <CardHeader
           title="Latest Tokens"
-          action={
+          action={userPerms.canMint ?
             <Button
               color="primary"
               variant="contained"
@@ -172,6 +181,7 @@ export const LatestTokens = (props) => {
             >
               Mint New Token
             </Button>
+            : ''
           }
         />
         <PerfectScrollbar>

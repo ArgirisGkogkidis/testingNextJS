@@ -1,16 +1,16 @@
 import PropTypes from 'prop-types';
-import { Avatar, Box, Card, CardContent, Divider, Grid, Typography } from '@mui/material';
+import { Avatar, Box, Card, CardContent, Divider, Grid, Typography, Button } from '@mui/material';
 import { Clock as ClockIcon } from '../../icons/clock';
 import { Download as DownloadIcon } from '../../icons/download';
 
-export const ProductCard = ({ product, ...rest }) => (
+export const ProductCard = ({ product, onEditIngredient }) => (
   <Card
     sx={{
       display: 'flex',
       flexDirection: 'column',
       height: '100%'
     }}
-    {...rest}
+  // {...rest}
   >
     <CardContent>
       <Box
@@ -22,7 +22,7 @@ export const ProductCard = ({ product, ...rest }) => (
       >
         <Avatar
           alt="Product"
-          src={product.media}
+          src={product.icon}
           variant="square"
         />
       </Box>
@@ -32,7 +32,7 @@ export const ProductCard = ({ product, ...rest }) => (
         gutterBottom
         variant="h5"
       >
-        {product.title}
+        {product.name}
       </Typography>
       <Typography
         align="center"
@@ -48,7 +48,7 @@ export const ProductCard = ({ product, ...rest }) => (
       <Grid
         container
         spacing={2}
-        sx={{ justifyContent: 'space-between' }}
+        sx={{ justifyContent: 'center', }}
       >
         <Grid
           item
@@ -57,17 +57,20 @@ export const ProductCard = ({ product, ...rest }) => (
             display: 'flex'
           }}
         >
-          <ClockIcon color="action" />
-          <Typography
-            color="textSecondary"
-            display="inline"
-            sx={{ pl: 1 }}
-            variant="body2"
+          <Button
+            variant="outlined" // You can choose "text", "contained", or "outlined"
+            color="primary" // This is the color of the button
+            onClick={() => {
+              // Your edit action here
+              // For example, calling a function to open a modal:
+              onEditIngredient(product)
+            }}
+            sx={{ textTransform: 'none' }} // Optional: Prevents uppercase transformation
           >
-            Updated 2hr ago
-          </Typography>
+            Edit
+          </Button>
         </Grid>
-        <Grid
+        {/* <Grid
           item
           sx={{
             alignItems: 'center',
@@ -85,7 +88,7 @@ export const ProductCard = ({ product, ...rest }) => (
             {' '}
             Downloads
           </Typography>
-        </Grid>
+        </Grid> */}
       </Grid>
     </Box>
   </Card>

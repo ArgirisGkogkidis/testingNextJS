@@ -16,7 +16,7 @@ import { Search as SearchIcon } from '../../icons/search';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import Snackbar from '@mui/material/Snackbar';
 import UserPerms from '../../components/admin/user-permisions'
-import ingridients from '../../utils/ingridients'
+import ingridients from '../../utils/ingredients'
 
 // class Dapp extends React.Component {
 const Dapp = (props) => {
@@ -87,7 +87,7 @@ const Dapp = (props) => {
     }
     setTimeout(() => {
       if (!userIngredient) {
-        setPermisions(ingridients.data.ingridients)
+        setPermisions(ingridients.data.ingredient)
       }
       else {
         if (userIngredient <= 0) {
@@ -99,7 +99,7 @@ const Dapp = (props) => {
           });
           return;
         }
-        if (userIngredient > ingridients.data.ingridients.length) {
+        if (userIngredient > ingridients.data.ingredient.length) {
           setSnackBarMessage("Set a known ingredient ID")
           setState({
             open: true,
@@ -109,7 +109,7 @@ const Dapp = (props) => {
           return;
         }
         const ingredientID = userIngredient
-        const _ingridient = ingridients.data.ingridients[ingredientID - 1]
+        const _ingridient = ingridients.data.ingredient[ingredientID - 1]
         setPermisions({ _ingridient })
       }
     }, 1000);
