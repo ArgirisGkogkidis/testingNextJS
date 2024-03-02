@@ -53,7 +53,7 @@ const Register = (props) => {
     onSubmit: (values) => {
       values['wallet'] = props.accounts
 
-      axios.post('https://blockchainbackendserver.herokuapp.com/api/v1/register', values).then(response => {
+      axios.post('http://127.0.0.1:4000/api/v1/register', values).then(response => {
         window.location.reload();
       })
         .catch((reason) => {

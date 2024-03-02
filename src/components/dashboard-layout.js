@@ -39,26 +39,56 @@ export const DashboardLayout = (props) => {
     </React.Fragment>
   );
 
-  useEffect(() => {
-    const results2 = tracking.events._eTransferToken({ fromBlock: 0, toBlock: 'latest' }, function (err, result) {
-      if (err) {
-        console.log(err)
-        return;
-      }
+  const [events, setEvents] = React.useState([]);
 
-      const owner = result.returnValues._receiver
-      const tokenHash = result.returnValues._tokenHash
-      const ingridientID = result.returnValues._ingridientID
-      generateSnacks(ingridientID, tokenHash, owner)
+  // Effect to listen for blockchain events
+  React.useEffect(() => {
+    const eventSubscription = tracking.events.TokenTransferred({
+      fromBlock: 0, toBlock: 'latest'
     })
-  }, [tracking.events])
+      .on('data', (event) => {
+        console.log('Event received:', event, event.returnValues.tokenHash, event.returnValues.to);
+        generateSnacks(event.returnValues.tokenHash, event.returnValues.to)
+        setEvents((prevEvents) => [...prevEvents, event]);
+      })
+      .on('error', console.error);
 
-  async function generateSnacks(ingridientID, tokenHash, owner) {
+    // Cleanup
+    return () => {
+      eventSubscription.unsubscribe();
+    };
+  }, []); // Runs once on mount
 
-    const tknD = await tracking.methods.getTokenData(ingridientID, tokenHash).call()
+  // Another effect that depends on `events` state
+  React.useEffect(() => {
+    // This code runs when `events` state changes
+    if (events.length > 0) {
+      console.log("New event added:", events[events.length - 1]);
+      // Do something in response to a new event
+    }
+  }, [events]); // Reacts to changes in `events`
 
-    if (accounts === owner && tknD[0] == 2 && tknD[2] != accounts) {
-      const tokenLink = tokenHash + ":" + ingridientID
+
+
+  // useEffect(() => {
+  //   const results2 = tracking.events.TokenTransferred({ fromBlock: 0, toBlock: 'latest' }, function (err, result) {
+  //     if (err) {
+  //       console.log(err)
+  //       return;
+  //     }
+
+  //     const owner = result.returnValues.to
+  //     const tokenHash = result.returnValues.tokenHash
+  //     generateSnacks(tokenHash, owner)
+  //   })
+  // }, [tracking.events])
+
+  async function generateSnacks(tokenHash, owner) {
+
+    const tknD = await tracking.methods.getTokenData(tokenHash).call()
+
+    if (accounts === owner && Number(tknD[1]) == 2 && Number(tknD[3]) != accounts) {
+      const tokenLink = tokenHash;
 
       if (router.asPath.indexOf(tokenLink) != -1)
         return

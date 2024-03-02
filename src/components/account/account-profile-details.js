@@ -66,7 +66,7 @@ export const AccountProfileDetails = (props) => {
       values['wallet'] = props.user.wallet
 
       console.log(values)
-      axios.patch('https://blockchainbackendserver.herokuapp.com/api/v1/', values).then(response => {
+      axios.patch('http://127.0.0.1:4000/api/v1/', values).then(response => {
         console.log(response);
       })
       .catch((reason) => {

@@ -38,8 +38,8 @@ const MintToken = (props) => {
         const rs = await tracking.methods.pack(tokenHashes, accounts).send({ from: accounts });
         console.log(rs);
 
-        const packHash = rs.events._exposePackHash.returnValues.packHash
-        console.log("packHash:", packHash)
+        // const packHash = rs.events._exposePackHash.returnValues.packHash
+        // console.log("packHash:", packHash)
 
 
         // const tokenHash = rs.events._exposeMintedTokenHash.returnValues.tokenhash

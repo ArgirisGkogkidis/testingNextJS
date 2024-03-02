@@ -100,21 +100,21 @@ export const LatestOrders = (props) => {
   React.useEffect(() => {
     setTokenData([])
     idCounter = 0
-    const results2 = tracking.events._exposeMintedTokenHash({ fromBlock: 0, toBlock: 'latest' }, function (err, result) {
-      if (err) {
-        console.log(err)
-        return;
-      }
-      // console.log('rs')
-      // console.log(result)
-      const owner = result.returnValues.owner
-      const tokenHash = result.returnValues.tokenhash
-      const ingridientID = result.returnValues._ingridientID
+    // const results2 = tracking.events._exposeMintedTokenHash({ fromBlock: 0, toBlock: 'latest' }, function (err, result) {
+    //   if (err) {
+    //     console.log(err)
+    //     return;
+    //   }
+    //   // console.log('rs')
+    //   // console.log(result)
+    //   const owner = result.returnValues.owner
+    //   const tokenHash = result.returnValues.tokenhash
+    //   const ingridientID = result.returnValues._ingridientID
 
-      if (accounts === owner) {
-        initData(tokenHash, ingridientID, result.blockNumber)
-      }
-    })
+    //   if (accounts === owner) {
+    //     initData(tokenHash, ingridientID, result.blockNumber)
+    //   }
+    // })
 
   }, [])
 

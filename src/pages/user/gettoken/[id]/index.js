@@ -14,8 +14,7 @@ const TokenToReceive = (props) => {
   const { tracking, accounts } = props
   const router = useRouter()
   const { id } = router.query
-  const ingridientID = id.split(":")[1]
-  const tokenHash = id.split(":")[0]
+  const tokenHash = id
 
   const [tokenData, setTokenData] = useState({
     tokenStatus: 0,
@@ -31,7 +30,7 @@ const TokenToReceive = (props) => {
 
   async function generateSnacks() {
 
-    const tknD = await tracking.methods.getTokenData(ingridientID, tokenHash).call()
+    const tknD = await tracking.methods.getTokenData(tokenHash).call()
 
     setTokenData({
       tokenStatus: tknD[0],

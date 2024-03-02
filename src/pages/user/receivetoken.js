@@ -39,20 +39,20 @@ const ReceiveToken = (props) => {
     setDataRows([])
     setLoading(true)
     idCounter = 0
-    const results2 = tracking.events._eTransferToken({ fromBlock: 0, toBlock: 'latest' }, function (err, result) {
-      if (err) {
-        console.log(err)
-        return;
-      }
+    // const results2 = tracking.events._eTransferToken({ fromBlock: 0, toBlock: 'latest' }, function (err, result) {
+    //   if (err) {
+    //     console.log(err)
+    //     return;
+    //   }
 
-      const owner = result.returnValues._receiver
-      const tokenHash = result.returnValues._tokenHash
-      const ingridientID = result.returnValues._ingridientID
+    //   const owner = result.returnValues._receiver
+    //   const tokenHash = result.returnValues._tokenHash
+    //   const ingridientID = result.returnValues._ingridientID
 
-      if (accounts === owner) {
-        initData(tokenHash, ingridientID)
-      }
-    })
+    //   if (accounts === owner) {
+    //     initData(tokenHash, ingridientID)
+    //   }
+    // })
     setTimeout(() => {
       setLoading(false)
     }, 5000)
@@ -110,7 +110,7 @@ const ReceiveToken = (props) => {
     if (_ingridientID.length == 1)
       rs = await tracking.methods.receive_token(_ingridientID[0], _tokenHash[0]).send({ from: accounts });
     else
-      rs = await tracking.methods.receive_tokens(_ingridientID, _tokenHash).send({ from: accounts });
+      rs = await tracking.methods.receive_tokens(_tokenHash).send({ from: accounts });
 
     console.log("result", rs)
   }
@@ -166,14 +166,14 @@ const ReceiveToken = (props) => {
                   </IconButton>
 
                 </Tooltip>
-                <Tooltip title="Add">
+                <Tooltip title="Accept Tokens">
                   <IconButton onClick={acceptToken} >
                     <AddCircleIcon />
                   </IconButton>
 
                 </Tooltip>
               </>
-            ) : <>Skata</>}
+            ) : ''}
             <div style={{ height: 400, width: '100%' }}>
 
 

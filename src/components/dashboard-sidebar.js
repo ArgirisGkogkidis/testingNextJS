@@ -67,7 +67,7 @@ const userNavigation = [
 ];
 
 export const DashboardSidebar = (props) => {
-  const { open, onClose } = props;
+  const { open, onClose, management, accounts } = props;
   const user = props.user;
   const router = useRouter();
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'), {
@@ -76,6 +76,8 @@ export const DashboardSidebar = (props) => {
   });
 
   const [trackingStatus, setTrackingStatus] = React.useState(false)
+  // State to store dynamic navigation
+  const [navigation, setNavigation] = React.useState([]);
 
   async function checkTrackingStatus() {
     const trackingContract = props.tracking;
@@ -83,12 +85,31 @@ export const DashboardSidebar = (props) => {
     setTrackingStatus(response === props.management.options.address)
   }
 
+  // Function to fetch user permissions and update navigation
+  const updateUserNavigation = async () => {
+    if (!management) return;
+
+    const userPerms = await management.methods.get_user_perms(accounts).call();
+    console.log(userPerms);
+    // Build dynamic navigation based on permissions
+    const dynamicNavigation = [
+      { href: '/user', icon: (<ChartBarIcon fontSize="small" />), title: 'Dashboard' },
+      ...(userPerms.canMint ? [{ href: '/user/minttoken', icon: (<DataSaverOnIcon />), title: 'Mint Token' }] : []),
+      ...(userPerms.canTransfer ? [{ href: '/user/transfertoken', icon: (<SendIcon fontSize="small" />), title: 'Transfer Token' }] : []),
+      ...(userPerms.canReceive ? [{ href: '/user/gettoken', icon: (<GetAppIcon fontSize="small" />), title: 'Receive Token' }] : []),
+      ...(userPerms.canSplit ? [{ href: '/user/splittoken', icon: (<HorizontalSplitIcon fontSize="small" />), title: 'Split Token' }] : []),
+      // Add more conditions based on permissions
+    ];
+
+    setNavigation(dynamicNavigation);
+  };
+
   useEffect(
     () => {
       if (!router.isReady) {
         return;
       }
-
+      updateUserNavigation();
       if (open) {
         onClose?.();
       }
@@ -218,7 +239,7 @@ export const DashboardSidebar = (props) => {
             ))
           }
           {
-            !props.isadmin && userNavigation.map((item) => (
+            !props.isadmin && navigation.map((item) => (
               <NavItem
                 key={item.title}
                 icon={item.icon}

@@ -16,9 +16,10 @@ export default class Web3Container extends React.Component {
       const management = await getContract(web3, managementDefinition)
       const isadmin = await management.methods.isAdmin(accounts[0]).call()
 
-      const data = await axios.get('https://blockchainbackendserver.herokuapp.com/api/v1/', {params: {wallet: accounts}});
+      const data = await axios.get('http://127.0.0.1:4000/api/v1/', {params: {wallet: accounts[0]}});
       const hasaccount = data.data.data.user.length==1
       const user = data.data.data.user[0]
+      console.log(data);
       this.setState({ web3, accounts, tracking, management, isadmin, hasaccount, user})
 
     } catch (error) {

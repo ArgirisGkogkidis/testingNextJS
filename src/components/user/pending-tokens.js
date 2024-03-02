@@ -35,50 +35,65 @@ const PendingTokens = (props) => {
   let idCounter = 0;
 
   React.useEffect(() => {
+
+    // const results2 = tracking.events._eTransferToken({ fromBlock: 0, toBlock: 'latest' }, function (err, result) {
+    //   if (err) {
+    //     console.log(err)
+    //     return;
+    //   }
+
+    //   const owner = result.returnValues._receiver
+    //   const tokenHash = result.returnValues._tokenHash
+    //   const ingridientID = result.returnValues._ingridientID
+
+    //   if (accounts === owner) {
+    //     initData(tokenHash, ingridientID)
+    //   }
+    // })
+    fetchTokens()
+
+  }, [])
+
+  const fetchTokens = async () => {
     setTokenData([])
     setDataRows([])
     setLoading(true)
-    idCounter = 0
-    const results2 = tracking.events._eTransferToken({ fromBlock: 0, toBlock: 'latest' }, function (err, result) {
-      if (err) {
-        console.log(err)
-        return;
+    idCounter = 0; // Reset counter
+    await tracking.methods.getUserPendingTokens(accounts).call().then(async results => {
+      console.log(results);
+      for (const result of results) {
+        // Skip if the result is the zero address
+        if (result === "0x0000000000000000000000000000000000000000000000000000000000000000") {
+          continue; // Skip this iteration and continue with the next loop iteration
+        }
+        await initData(result);
       }
+    });
+    setLoading(false)
+  };
 
-      const owner = result.returnValues._receiver
-      const tokenHash = result.returnValues._tokenHash
-      const ingridientID = result.returnValues._ingridientID
+  async function initData(tokenHash) {
+    console.log("request for:", tokenHash)
+    const tknD = await tracking.methods.getTokenData(tokenHash).call().then(async (token) => {
+      console.log("Received token data")
+      console.log(token)
+      if (Number(token[1]) == 2) {
+        setTokenData(prevPermisions => ([
+          ...prevPermisions,
+          {
+            tokenHash: tokenHash,
+            ingridientID: token[0]
+          }
+        ]))
+        idCounter += 1
 
-      if (accounts === owner) {
-        initData(tokenHash, ingridientID)
+        const data = await axios.get('http://127.0.0.1:4000/api/v1/', { params: { wallet: token[3] } });
+        const user = data.data.data.user[0]
+        const userName = user.firstName + " " + user.lastName
+        setDataRows((previousRow) => [...previousRow, { id: idCounter, tokenhash: tokenHash, tokenid: token[0], tokensender: userName, tokenquantity: token[2] }])
+        console.log(dataRows)
       }
     })
-    setTimeout(() => {
-      setLoading(false)
-    }, 5000)
-  }, [])
-
-  async function initData(tokenHash, ingridientID) {
-    const tknD = await tracking.methods.getTokenData(ingridientID, tokenHash).call()
-    console.log("token data")
-    console.log(tknD)
-    if (tknD[0] == 2) {
-      setTokenData(prevPermisions => ([
-        ...prevPermisions,
-        {
-          tokenHash: tokenHash,
-          ingridientID: ingridientID
-        }
-      ]))
-      idCounter += 1
-
-      const data = await axios.get('https://blockchainbackendserver.herokuapp.com/api/v1/', {params: {wallet: tknD[2]}});
-      const user = data.data.data.user[0]
-      const userName = user.firstName + " " + user.lastName
-      setDataRows((previousRow) => [...previousRow, { id: idCounter, tokenhash: tokenHash, tokenid: ingridientID, tokensender: userName, tokenquantity: tknD[1] }])
-      console.log(dataRows)
-    }
-
   }
 
   async function acceptToken() {
@@ -96,27 +111,25 @@ const PendingTokens = (props) => {
     //     console.log(rs)
     // }
 
-    const _ingridientID = []
-    const _tokenHash = []
+    const _tokenHashes = []
 
     for (let posID in selectionModel) {
-      const ingridientID = dataRows[posID].id
       const tokenHash = dataRows[posID].tokenhash
-      _ingridientID.push(ingridientID)
-      _tokenHash.push(tokenHash)
+
+      _tokenHashes.push(tokenHash)
     }
-    console.log(_ingridientID)
-    console.log(_tokenHash)
+    console.log(_tokenHashes)
 
     // const ingridientID = props.token.ingridientID
     // const tokenHash = props.token.tokenHash
     const rs = null
-    if (_ingridientID.length == 1)
-      rs = await tracking.methods.receive_token(_ingridientID[0], _tokenHash[0]).send({ from: accounts });
+    if (_tokenHashes.length == 1)
+      rs = await tracking.methods.receive_token(_tokenHashes[0]).send({ from: accounts });
     else
-      rs = await tracking.methods.receive_tokens(_ingridientID, _tokenHash).send({ from: accounts });
+      rs = await tracking.methods.receive_tokens(_tokenHashes).send({ from: accounts });
 
     console.log("result", rs)
+    fetchTokens()
   }
 
   const renderTokensToReceive = Object.values(tokenData).map((tkn) => {
