@@ -47,7 +47,7 @@ export const DashboardLayout = (props) => {
       fromBlock: 0, toBlock: 'latest'
     })
       .on('data', (event) => {
-        console.log('Event received:', event, event.returnValues.tokenHash, event.returnValues.to);
+        // console.log('Event received:', event, event.returnValues.tokenHash, event.returnValues.to);
         generateSnacks(event.returnValues.tokenHash, event.returnValues.to)
         setEvents((prevEvents) => [...prevEvents, event]);
       })
@@ -63,7 +63,7 @@ export const DashboardLayout = (props) => {
   React.useEffect(() => {
     // This code runs when `events` state changes
     if (events.length > 0) {
-      console.log("New event added:", events[events.length - 1]);
+      // console.log("New event added:", events[events.length - 1]);
       // Do something in response to a new event
     }
   }, [events]); // Reacts to changes in `events`
@@ -122,7 +122,6 @@ export const DashboardLayout = (props) => {
         accounts={props.accounts}
         tracking={props.tracking}
         management={props.management}
-        web3={props.web3}
         isadmin={props.isadmin}
         user={props.user}
       />

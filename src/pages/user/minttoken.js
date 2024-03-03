@@ -1,26 +1,29 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Head from 'next/head';
 import {
   Box, Button,
   Card,
   CardContent, Container, TextField,
   Typography,
-  Snackbar
+  Snackbar, MenuItem,
+  FormControl, InputLabel, Select
 } from '@mui/material';
-
+import axios from 'axios'
 
 const MintToken = (props) => {
-  const { tracking, accounts } = props
-  const [tokenIdToMint, setTokenIdToMint] = React.useState("")
-  const [tokenQuantity, setTokenQuantity] = React.useState("")
-  const [state, setState] = React.useState({
+  const { tracking, accounts, management } = props
+  const [tokenIdToMint, setTokenIdToMint] = useState("")
+  const [tokenQuantity, setTokenQuantity] = useState("")
+  const [tokenOptions, setTokenOptions] = useState([]);
+
+  const [state, setState] = useState({
     open: false,
     vertical: 'top',
     horizontal: 'center'
   });
 
   const { vertical, horizontal, open } = state;
-  const [snackBarMessage, setSnackBarMessage] = React.useState("a dummy message");
+  const [snackBarMessage, setSnackBarMessage] = useState("a dummy message");
 
   const handleClose = () => {
     setState({
@@ -32,6 +35,10 @@ const MintToken = (props) => {
     const { value } = event.target
     setTokenIdToMint(value)
   }
+
+  const handleTokenIdToMintChange = (event) => {
+    setTokenIdToMint(event.target.value);
+  };
   function handleTokenQuantity(event) {
     const { value } = event.target
     setTokenQuantity(value)
@@ -73,6 +80,26 @@ const MintToken = (props) => {
       horizontal: 'center'
     });
   }
+
+  useEffect(async () => {
+    await management.methods.getIngredientIDs().call().then(async ingredientIDs => {
+      for (const ingredientID of ingredientIDs) {
+        const canMintToken = await management.methods.get_perm_mint(accounts, ingredientID).call();
+        if (canMintToken) {
+          const data = await axios.get('http://127.0.0.1:4000/api/v1/ingridient/' + ingredientID);
+
+          setTokenOptions(prevProducts => ([
+            ...prevProducts,
+            {
+              id: ingredientID,
+              icon: data.data.data[0]?.icon,
+              name: data.data.data[0]?.name,
+            }
+          ]))
+        }
+      }
+    });
+  }, [])
 
   return (
     <>
@@ -116,32 +143,32 @@ const MintToken = (props) => {
                   noValidate
                   autoComplete="off"
                 >
-                  <Box
-                    sx={{
-                      maxWidth: 500,
 
-                    }} >
-                    <TextField
-                      fullWidth
-                      label="Token id to mint"
-                      variant="outlined"
+                  <FormControl fullWidth>
+                    <InputLabel id="token-id-select-label">Token ID to Mint</InputLabel>
+                    <Select
+                      labelId="token-id-select-label"
                       id="tokenidtomint"
                       value={tokenIdToMint}
-                      onChange={handleTokenIdToMint}
-                    />
-                    {tokenIdToMint}
-                  </Box>
-                  <Box sx={{ maxWidth: 500 }}>
+                      label="Token ID to Mint"
+                      onChange={handleTokenIdToMintChange}
+                    >
+                      {tokenOptions.map((option) => (
+                        <MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
 
-                    <TextField
-                      fullWidth
-                      placeholder="Token Quantity"
-                      variant="outlined"
-                      value={tokenQuantity}
-                      onChange={handleTokenQuantity}
-                    />
-                    {tokenQuantity}
-                  </Box>
+
+                  <TextField
+                    fullWidth
+                    placeholder="Token Quantity"
+                    variant="outlined"
+                    value={tokenQuantity}
+                    onChange={handleTokenQuantity}
+                  />
+                  {tokenQuantity}
+
                   <Box sx={{ maxWidth: 500 }}>
 
                     <Button

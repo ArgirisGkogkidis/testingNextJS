@@ -1,5 +1,5 @@
 import React from 'react'
-import Link from 'next/link'
+import axios from 'axios'
 import {
   Box,
   Container,
@@ -16,10 +16,9 @@ import { Search as SearchIcon } from '../../icons/search';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import Snackbar from '@mui/material/Snackbar';
 import UserPerms from '../../components/admin/user-permisions'
-import ingridients from '../../utils/ingredients'
 
-// class Dapp extends React.Component {
 const Dapp = (props) => {
+  const { management, accounts } = props;
   const [userEthAddress, setUserEthAddress] = React.useState('');
   const [userIngredient, setUserIngredient] = React.useState(0)
   const [permisions, setPermisions] = React.useState([])
@@ -85,33 +84,25 @@ const Dapp = (props) => {
       });
       return;
     }
-    setTimeout(() => {
-      if (!userIngredient) {
-        setPermisions(ingridients.data.ingredient)
-      }
-      else {
-        if (userIngredient <= 0) {
-          setSnackBarMessage("Set a non negative ingredient ID")
-          setState({
-            open: true,
-            vertical: 'top',
-            horizontal: 'center'
-          });
-          return;
+    setTimeout(async () => {
+      await management.methods.getIngredientIDs().call().then(async ingredientIDs => {
+        for (const ingredientID of ingredientIDs) {
+
+          const data = await axios.get('http://127.0.0.1:4000/api/v1/ingridient/' + ingredientID);
+
+          setPermisions(prevProducts => ([
+            ...prevProducts,
+            {
+              id: ingredientID,
+              icon: data.data.data[0]?.icon,
+              name: data.data.data[0]?.name,
+            }
+          ]))
         }
-        if (userIngredient > ingridients.data.ingredient.length) {
-          setSnackBarMessage("Set a known ingredient ID")
-          setState({
-            open: true,
-            vertical: 'top',
-            horizontal: 'center'
-          });
-          return;
-        }
-        const ingredientID = userIngredient
-        const _ingridient = ingridients.data.ingredient[ingredientID - 1]
-        setPermisions({ _ingridient })
-      }
+      });
+      // if (!userIngredient) {
+      //   setPermisions(ingridients.data.ingredient)
+      // }
     }, 1000);
   }
 
@@ -153,31 +144,21 @@ const Dapp = (props) => {
             Manage User permissions
           </Typography>
         </Box>
-        <Box sx={{
-          alignItems: 'center',
-          display: 'flex',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          mt: 3
-        }}>
+        <Box sx={{ mt: 3 }}>
           <Card>
             <CardContent>
               <Box sx={{
-                alignItems: 'center',
                 display: 'flex',
-                justifyContent: 'space-between',
-                '& .MuiTextField-root': { m: 1, width: '25ch' },
-                flexWrap: 'wrap'
+                justifyContent: 'space-between', // This will push the child elements to the edges
+                alignItems: 'center', // Vertically align items in the middle
+                width: '100%', // Ensure the Box takes the full width
               }}
                 component="form"
                 noValidate
                 autoComplete="off"
               >
                 <Box
-                  sx={{
-                    maxWidth: 500,
-
-                  }} >
+                  sx={{ flexGrow: 1, mr: 1 }} >
                   <TextField
                     fullWidth
                     InputProps={{
@@ -199,33 +180,8 @@ const Dapp = (props) => {
                     onChange={handleChange}
                     onPaste={handlePaste}
                   />
-                  {userEthAddress}
                 </Box>
-                <Box sx={{ maxWidth: 500 }}>
-
-                  <TextField
-                    fullWidth
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <SvgIcon
-                            fontSize="small"
-                            color="action"
-                          >
-                            <SearchIcon />
-                          </SvgIcon>
-                        </InputAdornment>
-                      )
-                    }}
-                    placeholder="Ingridient ID"
-                    variant="outlined"
-                    value={userIngredient}
-                    onChange={handleIngredientChange}
-                  />
-                  {userIngredient}
-                </Box>
-                <Box sx={{ maxWidth: 500 }}>
-
+                <Box>
                   <Button
                     color="primary"
                     variant="contained"
@@ -238,19 +194,10 @@ const Dapp = (props) => {
             </CardContent>
           </Card>
         </Box>
-        <Box sx={{
-          alignItems: 'center',
-          display: 'flex',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          mt: 3
-        }}>
+        <Box sx={{ pt: 3 }}>
           <Grid
             container
-            direction="row"
-            justifyContent="center"
-            alignItems="center"
-            spacing={1}
+            spacing={3}
           >
             {renderedUserPerms}
           </Grid>

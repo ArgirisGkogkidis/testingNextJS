@@ -22,10 +22,13 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ingredients from '../../utils/ingredients'
 import TransferModal from './actions/transfer-token';
 import SplitModal from './actions/split-token';
+import MintModal from './actions/mint-token';
+import axios from 'axios'
+
 
 export const LatestTokens = (props) => {
 
-  const { tracking, accounts, userPerms } = props
+  const { tracking, accounts, userperms, management } = props
   const [tokenData, setTokenData] = React.useState([{
     id: uuid(),
     ref: 'CDD1049',
@@ -42,15 +45,18 @@ export const LatestTokens = (props) => {
   const open = Boolean(anchorEl);
 
   const [transferModalOpen, setTransferModalOpen] = React.useState(false);
+  const [mintModalOpen, setMintModalOpen] = React.useState(false);
   const [splitModalOpen, setSplitModalOpen] = React.useState(false);
   const [selectedToken, setSelectedToken] = React.useState(null);
 
   let idCounter = 0;
 
   React.useEffect(() => {
-    // Call fetchLatestTokens and wait for it to complete before calling onRefreshComplete
-    fetchTokens();
-  }, [props.refreshTokens, userPerms]);
+    if (Object.keys(userperms).length > 0) {
+      // Call fetchLatestTokens and wait for it to complete before calling onRefreshComplete
+      fetchTokens();
+    }
+  }, [props.refreshtokens, userperms]);
 
   const fetchTokens = async () => {
     setTokenData([]); // Reset token data before fetching new data
@@ -69,12 +75,13 @@ export const LatestTokens = (props) => {
     }
     const tknD = await tracking.methods.getTokenData(tokenHash).call()
 
-    // Assuming userPerms is available in your component's state or props
-    const hasTransferPermission = userPerms?.canTransfer ?? false;
-    const hasSplitPermission = userPerms?.canSplit ?? false;
+    // Assuming userperms is available in your component's state or props
+    const hasTransferPermission = userperms?.canTransfer ?? false;
+    const hasSplitPermission = userperms?.canSplit ?? false;
 
-    console.log('yolo', ...(Number(tknD[1]) === 1 && hasTransferPermission ? ['Transfer'] : []));
     if (tknD[3] === accounts && idCounter <= 8) {
+      const data = await axios.get('http://127.0.0.1:4000/api/v1/ingridient/' + tknD[0]);
+
       setTokenData(prevPermisions => ([
         ...prevPermisions,
         {
@@ -83,7 +90,7 @@ export const LatestTokens = (props) => {
           ingredient: Number(tknD[0]),
           amount: tknD[2],
           customer: {
-            name: ingredients.data.ingredient[tknD[0]].name
+            name: data.data.data[0]?.name
           },
           createdAt: tknD[6] * 1000,
           status: Number(tknD[1]) === 1 ? 'ready' : (Number(tknD[1]) == 2 ? 'transfered' : 'packed'),
@@ -98,11 +105,10 @@ export const LatestTokens = (props) => {
   }
 
   const handleClick = (event, token) => {
-    console.log(token); // Debug: Log the token being set
+    // console.log(token); // Debug: Log the token being set
     setAnchorEl(event.currentTarget);
     setSelectedToken(token);
   };
-
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -115,6 +121,14 @@ export const LatestTokens = (props) => {
   const handleCloseTransferModal = () => {
     setTransferModalOpen(false);
     setSelectedToken(null);
+  };
+
+  const handleOpenMintModal = () => {
+    setMintModalOpen(true);
+  };
+
+  const handleCloseMintModal = () => {
+    setMintModalOpen(false);
   };
 
   const handleOpenSplitModal = () => {
@@ -158,26 +172,16 @@ export const LatestTokens = (props) => {
     handleCloseSplitModal();
   };
 
-  // Define the function for minting a new token
-  const handleMintToken = async () => {
-    // Logic to mint a new token
-    // This usually involves calling a smart contract function
-    // For example: await contract.methods.mintToken(...params).send({ from: accounts });
-    console.log('Minting a new token...');
-    // After minting, you may want to refresh the token list
-    fetchTokens(); // Assuming fetchTokens fetches the updated list of tokens
-  };
-
   return (
     <>
       <Card {...props}>
         <CardHeader
           title="Latest Tokens"
-          action={userPerms.canMint ?
+          action={userperms.canMint ?
             <Button
               color="primary"
               variant="contained"
-              onClick={handleMintToken}
+              onClick={handleOpenMintModal}
             >
               Mint New Token
             </Button>
@@ -295,12 +299,21 @@ export const LatestTokens = (props) => {
           onClose={handleCloseTransferModal}
           onTransfer={handleTransfer}
           token={selectedToken}
+          management={management}
         />
         <SplitModal
           open={splitModalOpen}
           onClose={handleCloseSplitModal}
           onSplit={handleSplit}
           token={selectedToken}
+        />
+        <MintModal
+          isopen={mintModalOpen}
+          onClose={handleCloseMintModal}
+          management={management}
+          tracking={tracking}
+          accounts={accounts}
+          triggerrefresh={props.onrefreshcomplete}
         />
       </div>
     </>

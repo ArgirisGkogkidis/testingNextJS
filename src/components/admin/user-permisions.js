@@ -71,8 +71,7 @@ export default function UserPerms(props) {
   return (
     <Grid item
       lg={3}
-      sm={6}
-      xl={3}
+      md={4}
       xs={12}
       key={ingridient.id}>
       <Card style={{ width: "20rem" }}>

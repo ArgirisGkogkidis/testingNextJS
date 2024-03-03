@@ -16,13 +16,15 @@ const Dashboard = (props) => {
   useEffect(() => {
     const fetchUserPerms = async () => {
       const perms = await props.management.methods.get_user_perms(props.accounts).call();
-      setUserPerms({
-        canMint: perms.canMint,
-        canPack: perms.canPack,
-        canReceive: perms.canReceive,
-        canSplit: perms.canSplit,
-        canTransfer: perms.canTransfer
-      });
+      if (JSON.stringify(perms) !== JSON.stringify(userPerms)) {
+        setUserPerms({
+          canMint: perms.canMint,
+          canPack: perms.canPack,
+          canReceive: perms.canReceive,
+          canSplit: perms.canSplit,
+          canTransfer: perms.canTransfer
+        });
+      }
     };
 
     fetchUserPerms();
@@ -55,17 +57,18 @@ const Dashboard = (props) => {
               xl={9}
               xs={12}
             >
-              <LatestTokens {...props} refreshTokens={refreshTokens} onRefreshComplete={triggerRefresh} userPerms={userPerms} />
+              {userPerms ? <LatestTokens {...props} refreshtokens={refreshTokens} onrefreshcomplete={triggerRefresh} userperms={userPerms} /> : ''}
             </Grid>
-            <Grid
-              item
-              lg={12}
-              md={12}
-              xl={9}
-              xs={12}
-            >
-              <PendingTokens {...props} onTokenAccepted={triggerRefresh} userPerms={userPerms} />
-            </Grid>
+            {userPerms && userPerms.canReceive ?
+              <Grid
+                item
+                lg={12}
+                md={12}
+                xl={9}
+                xs={12}
+              >
+                <PendingTokens {...props} onTokenAccepted={triggerRefresh} userPerms={userPerms} />
+              </Grid> : ''}
           </Grid>
         </Container>
       </Box>

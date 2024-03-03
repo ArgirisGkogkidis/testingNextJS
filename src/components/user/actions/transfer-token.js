@@ -1,8 +1,10 @@
 import React from 'react';
 import {
   Modal, Box, Typography, TextField, Button, Card,
-  CardContent, Container, Backdrop, Fade
+  CardContent, Container, Backdrop, Fade,
+  FormControl, FormLabel, InputLabel, Select, MenuItem
 } from '@mui/material';
+import axios from 'axios'
 
 const style = {
   position: 'absolute',
@@ -18,9 +20,10 @@ const style = {
   alignItems: 'center',
 };
 
-const TransferModal = ({ open, onClose, onTransfer, token }) => {
+const TransferModal = ({ open, onClose, onTransfer, token, management }) => {
   // Local state to hold the recipient's address
   const [recipientAddress, setRecipientAddress] = React.useState('');
+  const [recipientOptions, setRecipientOptions] = React.useState([]);
 
   const handleRecipientChange = (event) => {
     setRecipientAddress(event.target.value);
@@ -33,11 +36,27 @@ const TransferModal = ({ open, onClose, onTransfer, token }) => {
   };
 
   // Effect to reset the form when the modal is closed or opened.
-  React.useEffect(() => {
-    if (!open) {
+  React.useEffect(async () => {
+    if (open && token) {
       setRecipientAddress('');
+      setRecipientOptions([])
+      const users = await axios.get('http://127.0.0.1:4000/api/v1/users');
+      for (const user of users.data.data) {
+
+        const canReceive = await management.methods.get_perm_receive(user.wallet, token.ingredient).call();
+
+        if (canReceive)
+          setRecipientOptions(prevProducts => ([
+            ...prevProducts,
+            {
+              id: user.wallet,
+              name: user.firstName + ' ' + user.lastName,
+            }
+          ]))
+      }
+      console.log(recipientOptions)
     }
-  }, [open]);
+  }, [open, token]);
   return (
     <Modal
       open={open}
@@ -56,14 +75,28 @@ const TransferModal = ({ open, onClose, onTransfer, token }) => {
             Transfer Token
           </Typography>
           <Box component="form" noValidate sx={{ mt: 2, width: '100%' }}>
-            <TextField
+            {/* <TextField
               fullWidth
               id="recipient-address"
               label="Recipient Address"
               value={recipientAddress}
               onChange={handleRecipientChange}
               margin="normal"
-            />
+            /> */}
+            <FormControl component='fieldset' sx={{ mt: 2, width: '100%' }}>
+              <InputLabel id="token-id-select-label">Token ID to Mint</InputLabel>
+              <Select
+                labelId="token-id-select-label"
+                id="recipient-address"
+                value={recipientAddress}
+                label="Token ID to Mint"
+                onChange={handleRecipientChange}
+              >
+                {recipientOptions.map((option) => (
+                  <MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
             <Button
               variant="contained"
               sx={{ mt: 2 }}

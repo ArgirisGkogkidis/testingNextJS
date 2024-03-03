@@ -33,41 +33,9 @@ const adminNavigation = [
     icon: (<ShoppingBagIcon fontSize="small" />),
     title: 'Ingridients'
   }]
-const userNavigation = [
-  {
-    href: '/user',
-    icon: (<ChartBarIcon fontSize="small" />),
-    title: 'Dashboard'
-  },
-  {
-    href: '/user/minttoken',
-    icon: (<DataSaverOnIcon />),
-    title: 'Mint Token'
-  },
-  {
-    href: '/user/transfertoken',
-    icon: (<SendIcon fontSize="small" />),
-    title: 'Transfer Token'
-  },
-  {
-    href: '/user/gettoken',
-    icon: (<GetAppIcon fontSize="small" />),
-    title: 'Receive Token'
-  },
-  {
-    href: '/user/splittoken',
-    icon: (<HorizontalSplitIcon fontSize="small" />),
-    title: 'Split Token'
-  },
-  {
-    href: '/404',
-    icon: (<XCircleIcon fontSize="small" />),
-    title: 'Error'
-  }
-];
 
 export const DashboardSidebar = (props) => {
-  const { open, onClose, management, accounts } = props;
+  const { open, onClose, management, accounts,tracking } = props;
   const user = props.user;
   const router = useRouter();
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'), {
@@ -80,8 +48,7 @@ export const DashboardSidebar = (props) => {
   const [navigation, setNavigation] = React.useState([]);
 
   async function checkTrackingStatus() {
-    const trackingContract = props.tracking;
-    const response = await trackingContract.methods.get_management_sc().call({ from: props.accounts })
+    const response = await tracking.methods.get_management_sc().call({ from: props.accounts })
     setTrackingStatus(response === props.management.options.address)
   }
 
@@ -90,14 +57,11 @@ export const DashboardSidebar = (props) => {
     if (!management) return;
 
     const userPerms = await management.methods.get_user_perms(accounts).call();
-    console.log(userPerms);
     // Build dynamic navigation based on permissions
     const dynamicNavigation = [
       { href: '/user', icon: (<ChartBarIcon fontSize="small" />), title: 'Dashboard' },
-      ...(userPerms.canMint ? [{ href: '/user/minttoken', icon: (<DataSaverOnIcon />), title: 'Mint Token' }] : []),
-      ...(userPerms.canTransfer ? [{ href: '/user/transfertoken', icon: (<SendIcon fontSize="small" />), title: 'Transfer Token' }] : []),
-      ...(userPerms.canReceive ? [{ href: '/user/gettoken', icon: (<GetAppIcon fontSize="small" />), title: 'Receive Token' }] : []),
-      ...(userPerms.canSplit ? [{ href: '/user/splittoken', icon: (<HorizontalSplitIcon fontSize="small" />), title: 'Split Token' }] : []),
+      ...(userPerms.canPack ? [{ href: '/user/recipe', icon: (<HorizontalSplitIcon fontSize="small" />), title: 'Manage Recipes' }] : []),
+      ...(userPerms.canPack ? [{ href: '/user/pack', icon: (<HorizontalSplitIcon fontSize="small" />), title: 'Manage Pack' }] : []),
       // Add more conditions based on permissions
     ];
 
@@ -202,7 +166,7 @@ export const DashboardSidebar = (props) => {
                       gutterBottom
                     >
                       Tracking Address:<br></br>
-                      {props.tracking.options.address}
+                      {tracking.options.address}
                     </Typography>
                   </> : <> </>
                 }
