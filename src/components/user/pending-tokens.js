@@ -1,5 +1,4 @@
 import React from 'react'
-import Head from 'next/head';
 import {
   Box, Button,
   Container, List,
@@ -8,7 +7,6 @@ import {
   IconButton
 } from '@mui/material';
 
-import ReceiveTokenComponent from '../../components/user/receive-token-component'
 import axios from 'axios'
 import { DataGrid } from '@mui/x-data-grid';
 import CustomNoRowsOverlay from '../../icons/norowoverlay'
@@ -116,34 +114,15 @@ const PendingTokens = (props) => {
     // const ingridientID = props.token.ingridientID
     // const tokenHash = props.token.tokenHash
     const rs = null
-    if (_tokenHashes.length == 1)
-      rs = await tracking.methods.receive_token(_tokenHashes[0]).send({ from: accounts });
-    else
-      rs = await tracking.methods.receive_tokens(_tokenHashes).send({ from: accounts });
+    rs = await tracking.methods.receive_tokens(_tokenHashes).send({ from: accounts });
 
     console.log("result", rs)
     fetchTokens()
     props.onTokenAccepted();
   }
 
-  const renderTokensToReceive = Object.values(tokenData).map((tkn) => {
-    const perms = {}
-    perms["token"] = tkn
-    perms["contract"] = props.tracking
-    perms["account"] = props.accounts
-    return (
-      <ReceiveTokenComponent {...perms}
-        key={tkn.tokenHash} />
-    )
-  })
-
   return (
     <>
-      <Head>
-        <title>
-          Receive Token | Blockchain Food Supply
-        </title>
-      </Head>
       <Box
         component="main"
         sx={{
@@ -166,9 +145,6 @@ const PendingTokens = (props) => {
             flexWrap: 'wrap',
             mt: 3
           }}>
-            {/* <List dense={true}>
-                            {renderTokensToReceive}
-                        </List> */}
             {selectionModel.length > 0 ? (
               <>
                 <Tooltip title="Delete">

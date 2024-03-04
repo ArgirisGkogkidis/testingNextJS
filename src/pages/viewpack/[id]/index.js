@@ -1,148 +1,164 @@
-
-import React, { useEffect, useState } from 'react'
-import Head from 'next/head';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router'
-import {
-  Box, Container,
-  Typography, Grid, Pagination
-} from '@mui/material';
-import usePagination from '../../../utils/usePagination';
-import ingridients from '../../../utils/ingredients'
-import { PackIngridientCard } from '../../../components/ingridients/packIngridient-card';
-import { v4 as uuid } from 'uuid';
-import axios from 'axios'
+import { Box, Container, Typography, Grid } from '@mui/material';
+import { PackIngredientCard } from 'src/components/user/pack/view/PackIngredientCard';
+import axios from 'axios';
+import { v4 as uuid } from 'uuid'; // Ensure you have 'uuid' installed
 
-const ViewPackGeneral = (props) => {
-  const { tracking, accounts } = props
-  const router = useRouter()
-  const { id } = router.query
-  const tokenHash = id
+const packData = {
+  "packHash": "0x0be47726aee44389eb1a1f93dbd222873c1ceca6ebfe6cb96d3705a3fb482919",
+  "totalTokens": 4,
+  "createdOn": 0,
+  "totalPacks": 50,
+  "tokens": [
+    {
+      "tokenHash": "0xf773ea79197f5d309680f8cd4a3472d204ba0568d31a8ffa09e63c3401f59f01",
+      "ingredientID": 4,
+      "status": 3,
+      "amount": 350000,
+      "holder": "0x1923463B7Ee126B1859D3c587659b256002D7265",
+      "pendingHolder": "0x0000000000000000000000000000000000000000",
+      "mintedOn": 1709590097,
+      "pastHolders": [
+        {
+          "holderAddress": "0xE8E1A1aB123B1014F402EEABcBb6046ea41A403D",
+          "timestamp": 1709589959
+        },
+        {
+          "holderAddress": "0x1923463B7Ee126B1859D3c587659b256002D7265",
+          "timestamp": 1709590053
+        },
+        {
+          "holderAddress": "0xE8E1A1aB123B1014F402EEABcBb6046ea41A403D",
+          "timestamp": 1709590078
+        }
+      ]
+    },
+    {
+      "tokenHash": "0xe52ce28d27d10db57588731c8eb06ab8f4c8aef0e6847e09c06d94cee08de2f8",
+      "ingredientID": 1,
+      "status": 3,
+      "amount": 6500000,
+      "holder": "0x1923463B7Ee126B1859D3c587659b256002D7265",
+      "pendingHolder": "0x0000000000000000000000000000000000000000",
+      "mintedOn": 1709590097,
+      "pastHolders": [
+        {
+          "holderAddress": "0xE8E1A1aB123B1014F402EEABcBb6046ea41A403D",
+          "timestamp": 1709583697
+        }
+      ]
+    },
+    {
+      "tokenHash": "0x062674fbc0af09d2802ada839469ae2c12882aee77a63b1c3fb28633367ebbd4",
+      "ingredientID": 2,
+      "status": 3,
+      "amount": 7300000,
+      "holder": "0x1923463B7Ee126B1859D3c587659b256002D7265",
+      "pendingHolder": "0x0000000000000000000000000000000000000000",
+      "mintedOn": 1709590097,
+      "pastHolders": [
+        {
+          "holderAddress": "0xE8E1A1aB123B1014F402EEABcBb6046ea41A403D",
+          "timestamp": 1709583697
+        }
+      ]
+    },
+    {
+      "tokenHash": "0xfcefa43ee092bf212f4f5b41d84f48bc2080865582d81807a2783bd99eaee2c4",
+      "ingredientID": 3,
+      "status": 3,
+      "amount": 6500000,
+      "holder": "0x1923463B7Ee126B1859D3c587659b256002D7265",
+      "pendingHolder": "0x0000000000000000000000000000000000000000",
+      "mintedOn": 1709590097,
+      "pastHolders": [
+        {
+          "holderAddress": "0xE8E1A1aB123B1014F402EEABcBb6046ea41A403D",
+          "timestamp": 1709583697
+        }
+      ]
+    }
+  ]
+}
 
+const PackDetail = () => {
+  const router = useRouter();
+  const { id } = router.query;
   const [tokenData, setTokenData] = useState([])
-
-  let [page, setPage] = React.useState(1)
-  const PER_PAGE = 12
-
-  const count = Math.ceil(tokenData.length / PER_PAGE)
-  const _DATA = usePagination(tokenData, PER_PAGE)
-
-  const handleChange = (e, p) => {
-    setPage(p);
-    _DATA.jump(p);
-  };
+  // Helper function to format timestamps
+  const formatDate = (timestamp) => new Date(timestamp * 1000).toLocaleDateString("en-US");
+  function milligramsToKilograms(milligrams) {
+    return milligrams / 1000000;
+  }
 
   useEffect(() => {
     setTokenData([])
-    generateSnacks()
+    fetchData()
   }, [])
+  async function fetchData() {
+    try {
+      // Assuming this URL returns the packData structure shown earlier
+      // const packResponse = await axios.get('http://your-api-endpoint.com/api/packData');
+      // const packData = packResponse.data;
 
-  async function generateSnacks() {
-    const packData = await tracking.methods.viewPack(id).call()
-    console.log('PackData:', packData);
-    for (let i = 0; i < packData[0]; i++) {
+      for (let token of packData.tokens) {
+        const pastHoldersPromises = token.pastHolders.map(async (holder) => {
+          if (holder.holderAddress === "0x0000000000000000000000000000000000000000") return null;
+          const response = await axios.get('http://localhost:4000/api/v1/', { params: { wallet: holder.holderAddress } });
+          const user = response.data.data.user[0];
+          return `${user.firstName} ${user.lastName}`;
+        });
 
-      const tknD = await tracking.methods.getTokenData(packData[1][i]).call()
-      console.log('PackData 2:', tknD);
-      const pastHolders = await tracking.methods.getTokenPastHolders(packData[1][i]).call()
-      console.log('PackData 3:', pastHolders);
-      const holdersName = ''
+        const pastHolders = (await Promise.all(pastHoldersPromises)).filter(Boolean).join(', ');
 
-      for (let i in pastHolders) {
-        let pastHolder = pastHolders[i]
-        if (pastHolder === "0x0000000000000000000000000000000000000000")
-          continue
-        console.log(pastHolder)
-        const data = await axios.get('http://localhost:4000/api/v1/', { params: { wallet: pastHolder } });
-        const user = data.data.data.user[0]
-        holdersName = user.firstName + " " + user.lastName + ',' + holdersName
+        const ingredientResponse = await axios.get(`http://127.0.0.1:4000/api/v1/ingridient/${token.ingredientID}`);
+        const ingredient = ingredientResponse.data.data[0];
+
+        setTokenData((prevData) => [
+          ...prevData,
+          {
+            id: uuid(),
+            ref: token.tokenHash,
+            ingredient: token.ingredientID,
+            amount: `${milligramsToKilograms(token.amount)} KG`,
+            customer: {
+              name: pastHolders || 'N/A', // Assuming you want to display past holders as customers
+            },
+            createdAt: token.mintedOn * 1000,
+            status: token.status === 1 ? 'ready' : (token.status === 2 ? 'transfered' : 'packed'),
+            actions: [
+              ...(token.status === 1 ? ['Transfer'] : []),
+              ...(token.status === 1 ? ['Split'] : [])
+            ],
+            meta: { // Ensure this property is correctly populated
+              name: ingredient.name || 'Unknown Ingredient',
+              image: ingredient.image || 'default_image_url_here'
+            }
+          }
+        ]);
       }
-
-      const data = await axios.get('http://localhost:4000/api/v1/', { params: { wallet: tknD[3] } });
-      const user = data.data.data.user[0]
-      const userName = user.firstName + " " + user.lastName
-
-      setTokenData(prevPermisions => ([
-        ...prevPermisions,
-        {
-          id: uuid(),
-          tokenID: tknD[0],
-          tokenStatus: tknD[1] == 1 ? 'ready' : (tknD[1] == 2 ? 'pending' : 'packed'),
-          tokenQuantity: tknD[2],
-          tokenHolder: userName,
-          tokenPendingHolder: tknD[4],
-          tokenPreviousHoldersLength: tknD[5],
-          meta: {
-            name: ingridients.data.ingredient[tknD[0] - 1].name,
-            image: ingridients.data.ingredient[tknD[0] - 1].image
-          },
-          createdAt: Number(tknD[6] * 1000),
-          pastHoldersNames: holdersName
-        }]))
-
+    } catch (error) {
+      console.error("Error fetching pack data:", error);
     }
   }
 
   return (
     <>
-      <Head>
-        <title>
-          View Pack Token | Blockchain Food Supply
-        </title>
-      </Head>
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          py: 8
-        }}
-      >
+      <Box component="main" sx={{ flexGrow: 1, py: 8 }}>
         <Container maxWidth="lg">
-
-          <Typography
-            sx={{ m: 1 }}
-            variant="h4"
-          >
-            View Pack ({id})
-          </Typography>
-          <Box sx={{
-            alignItems: 'center',
-            display: 'flex',
-            justifyContent: 'space-between',
-            flexWrap: 'wrap',
-            mt: 3
-          }}>
-            <Grid
-              container
-              spacing={3}
-              justify="flex-start"
-              alignItems="center"
-            >
-              {_DATA.currentData().map((product) => (
-                <Grid
-                  item
-                  key={product.id}
-                  lg={4}
-                  md={6}
-                  xs={12}
-                >
-                  <PackIngridientCard product={product} props />
-                </Grid>
+          <Typography sx={{ m: 1 }} variant="h4">View Pack ({packData.packHash})</Typography>
+          <Box sx={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', mt: 3 }}>
+            <Grid container spacing={3}>
+              {tokenData.map((token, index) => (
+                <PackIngredientCard key={index} product={token} />
               ))}
-
-              <Pagination
-                count={count}
-                size="large"
-                page={page}
-                variant="outlined"
-                shape="rounded"
-                onChange={handleChange}
-              />
             </Grid>
           </Box>
         </Container>
-      </Box >
+      </Box>
     </>
-  )
-}
+  );
+};
 
-export default ViewPackGeneral
+export default PackDetail;

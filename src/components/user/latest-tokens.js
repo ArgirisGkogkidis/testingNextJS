@@ -93,7 +93,7 @@ export const LatestTokens = (props) => {
           customer: {
             name: data.data.data[0]?.name
           },
-          createdAt: tknD[6] * 1000,
+          createdAt: tknD[5] * 1000,
           status: Number(tknD[1]) === 1 ? 'ready' : (Number(tknD[1]) == 2 ? 'transfered' : 'packed'),
           actions: [
             ...(Number(tknD[1]) === 1 && hasTransferPermission ? ['Transfer'] : []),
@@ -178,7 +178,7 @@ export const LatestTokens = (props) => {
       <Card {...props}>
         <CardHeader
           title="Latest Tokens"
-          action={userperms.canMint ?
+          action={userperms?.canMint ?
             <Button
               color="primary"
               variant="contained"

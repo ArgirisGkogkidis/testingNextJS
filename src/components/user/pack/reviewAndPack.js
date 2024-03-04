@@ -24,7 +24,7 @@ const ReviewAndConfirm = (props) => {
   // Placeholder function for final submission
   const handleSubmit = async () => {
     console.log('Submit data to backend or perform final action here');
-    const rs = await tracking.methods.createSuperPack(productionQuantity,selectedIngredients,quantities).send({ from: accounts });
+    const rs = await tracking.methods.createSuperPack(productionQuantity, selectedIngredients, quantities).send({ from: accounts });
     console.log(rs)
     // Here, you might send the data to a backend or generate the PDF
   };
@@ -39,6 +39,7 @@ const ReviewAndConfirm = (props) => {
           const dbIngredient = availableIngredients.find(ing => ing.id == Number(tknD[0]));
           console.log('Found One:', dbIngredient)
           selectedRecipe.ingredients.map((ingredient) => {
+            console.log(ingredient.code == dbIngredient._id, ingredient.code, dbIngredient._id)
             if (ingredient.code == dbIngredient._id) {
               console.log('Selected?', ingredient, dbIngredient)
               setQuantities(prevQuantities => ([
