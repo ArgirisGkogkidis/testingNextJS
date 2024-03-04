@@ -68,6 +68,11 @@ export const DashboardSidebar = (props) => {
     setNavigation(dynamicNavigation);
   };
 
+  async function setContracts() {
+    // await management.methods.set(5).send({ from: accounts[0] })
+    await tracking.methods.set_management_sc(management.options.address).send({ from: accounts });
+  };
+
   useEffect(
     () => {
       if (!router.isReady) {
@@ -173,6 +178,13 @@ export const DashboardSidebar = (props) => {
                 <Typography>
                   Tracking Status {' '}: {trackingStatus ? "Active" : "Inactive"}
                 </Typography>
+                {props.isadmin && !trackingStatus && <Button
+                    color="primary"
+                    variant="contained"
+                    onClick={setContracts}
+                  >
+                    Set Management to Tracking
+                  </Button> }
               </div>
               <SelectorIcon
                 sx={{

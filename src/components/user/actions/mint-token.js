@@ -48,12 +48,14 @@ const MintModal = ({ isopen, onClose, tracking, accounts, management, triggerref
     setTokenIdToMint(value)
   }
 
+  const convertKgToMilligrams = (kg) => Math.round(kg * 1e6);
+
   const handleTokenIdToMintChange = (event) => {
     setTokenIdToMint(event.target.value);
   };
   function handleTokenQuantity(event) {
     const { value } = event.target
-    setTokenQuantity(value)
+    setTokenQuantity(value);
   }
 
   async function mintToken() {
@@ -78,7 +80,7 @@ const MintModal = ({ isopen, onClose, tracking, accounts, management, triggerref
     }
 
     // await contract.methods.mint_token(tokenIdToMint, tokenQuantity).send({ from: props.account });
-    const rs = await tracking.methods.mint_token(tokenIdToMint, tokenQuantity).send({ from: accounts });
+    const rs = await tracking.methods.mint_token(tokenIdToMint, convertKgToMilligrams(tokenQuantity)).send({ from: accounts });
     console.log(rs);
     triggerrefresh();
     onClose();
@@ -92,7 +94,8 @@ const MintModal = ({ isopen, onClose, tracking, accounts, management, triggerref
 
   useEffect(async () => {
 
-    if (isopen)
+    if (isopen) {
+      setTokenOptions([]);
       await management.methods.getIngredientIDs().call().then(async ingredientIDs => {
         for (const ingredientID of ingredientIDs) {
           const canMintToken = await management.methods.get_perm_mint(accounts, ingredientID).call();
@@ -110,6 +113,7 @@ const MintModal = ({ isopen, onClose, tracking, accounts, management, triggerref
           }
         }
       });
+    }
   }, [isopen])
 
   return (
@@ -127,7 +131,7 @@ const MintModal = ({ isopen, onClose, tracking, accounts, management, triggerref
       <Fade in={isopen}>
         <Box sx={style}>
           <Typography id='split-modal-title' variant='h6' component='h2'>
-            Split Token
+            Create Token
           </Typography>
           <FormControl component='fieldset' sx={{ mt: 2, width: '100%' }}>
             <InputLabel id="token-id-select-label">Token ID to Mint</InputLabel>
@@ -144,7 +148,7 @@ const MintModal = ({ isopen, onClose, tracking, accounts, management, triggerref
             </Select>
           </FormControl>
           <FormControl component='fieldset' sx={{ mt: 2, width: '100%' }}>
-            <FormLabel component='legend'>Select Split Value</FormLabel>
+            <FormLabel component='legend'>Select Amount Value (in KG)</FormLabel>
             <TextField
               fullWidth
               placeholder="Token Quantity"
@@ -154,7 +158,7 @@ const MintModal = ({ isopen, onClose, tracking, accounts, management, triggerref
             />
           </FormControl>
           <Button variant='contained' sx={{ mt: 2 }} onClick={mintToken}>
-            Mint
+            Create Token
           </Button>
         </Box>
       </Fade>

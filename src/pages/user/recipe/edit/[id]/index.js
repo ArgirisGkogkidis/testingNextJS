@@ -75,15 +75,16 @@ const RecipeForm = (props) => {
   const convertKilogramsToGrams = (kilograms) => {
     return Math.round(kilograms * 1000);
   };
+  const gramsToKilograms = (grams) => grams / 1000;
 
+  const convertKgToMilligrams = (kg) => Math.round(kg * 1e6);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     // Convert all ingredient quantities to grams if needed
     const ingredientsInGrams = recipe.ingredients.map((ingredient) => ({
       ...ingredient,
-      quantity: ingredient.unit === 'KG' ? convertKilogramsToGrams(ingredient.quantity) : ingredient.quantity,
-      unit: 'Grams', // Standardize unit
+      quantity: ingredient.unit === 'KG' ? convertKgToMilligrams(ingredient.quantity) : convertKgToMilligrams(gramsToKilograms(ingredient.quantity)), unit: 'Milligrams', // Standardize unit
     }));
 
     // Prepare the recipe with standardized ingredient quantities
@@ -181,8 +182,9 @@ const RecipeForm = (props) => {
                       value={ingredient.unit}
                       onChange={(e) => handleIngredientChange(index, e)}
                     >
-                      <MenuItem value="Grams">Grams</MenuItem>
                       <MenuItem value="KG">KG</MenuItem>
+                      <MenuItem value="Grams">Grams</MenuItem>
+                      <MenuItem value="Milligrams">Milligrams</MenuItem>
                     </Select>
                   </FormControl>
                 </Grid>

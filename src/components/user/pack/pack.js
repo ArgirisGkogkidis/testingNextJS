@@ -1,8 +1,8 @@
 import React from 'react'
 import { v4 as uuid } from 'uuid';
 import { Grid, Pagination } from '@mui/material';
-import { PackCard } from '../ingridients/pack-card';
-import usePagination from '../../utils/usePagination';
+import { PackCard } from '../../ingridients/pack-card';
+import usePagination from '../../../utils/usePagination';
 
 export const UserPacks = (props) => {
 

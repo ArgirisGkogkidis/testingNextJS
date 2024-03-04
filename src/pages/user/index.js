@@ -54,7 +54,6 @@ const Dashboard = (props) => {
               item
               lg={12}
               md={12}
-              xl={9}
               xs={12}
             >
               {userPerms ? <LatestTokens {...props} refreshtokens={refreshTokens} onrefreshcomplete={triggerRefresh} userperms={userPerms} /> : ''}
@@ -64,7 +63,6 @@ const Dashboard = (props) => {
                 item
                 lg={12}
                 md={12}
-                xl={9}
                 xs={12}
               >
                 <PendingTokens {...props} onTokenAccepted={triggerRefresh} userPerms={userPerms} />

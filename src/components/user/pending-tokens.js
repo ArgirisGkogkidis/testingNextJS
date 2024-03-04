@@ -54,6 +54,8 @@ const PendingTokens = (props) => {
 
   }, [])
 
+  const milligramsToKilograms = (milligrams) => milligrams / 1e6;
+
   const fetchTokens = async () => {
     setTokenData([])
     setDataRows([])
@@ -90,7 +92,7 @@ const PendingTokens = (props) => {
         const data = await axios.get('http://127.0.0.1:4000/api/v1/', { params: { wallet: token[3] } });
         const user = data.data.data.user[0]
         const userName = user.firstName + " " + user.lastName
-        setDataRows((previousRow) => [...previousRow, { id: idCounter, tokenhash: tokenHash, tokenid: token[0], tokensender: userName, tokenquantity: token[2] }])
+        setDataRows((previousRow) => [...previousRow, { id: idCounter, tokenhash: tokenHash, tokenid: token[0], tokensender: userName, tokenquantity: milligramsToKilograms(token[2]) }])
         console.log(dataRows)
       }
     })

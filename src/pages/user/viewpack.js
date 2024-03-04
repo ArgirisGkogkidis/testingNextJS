@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import { Box, Container, Grid } from '@mui/material';
-import { UserPacks } from '../../components/user/pack'
+import { UserPacks } from '../../components/user/pack/pack'
+import ViewPacks from 'src/components/user/pack/view/superPacks';
 
 
 const viewPack = (props) => {
@@ -32,7 +33,8 @@ const viewPack = (props) => {
               xl={9}
               xs={12}
             >
-              <UserPacks {...props} />
+              {/* <UserPacks {...props} /> */}
+              <ViewPacks {...props} />
             </Grid>
           </Grid>
         </Container>

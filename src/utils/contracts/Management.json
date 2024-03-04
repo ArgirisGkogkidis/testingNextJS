@@ -8913,8 +8913,8 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0x707e4a401C83cC73B0Fd0C1772c887Bd3bf4623b",
-      "transactionHash": "0x79a271ac7d30e25ce88488433160ef5fbfe31556945a3ba02e7430d1dcfc3001"
+      "address": "0xf86480F160215757841996CA7ED4AAF366D49A3F",
+      "transactionHash": "0xe4914efb9b9db98049077f4e4003d787bb75315dd0e721d4e357daf9d99b3010"
     },
     "43113": {
       "events": {},
@@ -8996,7 +8996,7 @@
     }
   },
   "schemaVersion": "3.4.16",
-  "updatedAt": "2024-03-02T17:37:46.093Z",
+  "updatedAt": "2024-03-03T22:05:15.017Z",
   "networkType": "ethereum",
   "devdoc": {
     "details": "Store & retrieve value in a variable",

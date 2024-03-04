@@ -67,6 +67,7 @@ export const LatestTokens = (props) => {
     });
   };
 
+  const milligramsToKilograms = (milligrams) => milligrams / 1e6;
 
   async function initData(tokenHash) {
     // Skip if the result is the zero address
@@ -88,7 +89,7 @@ export const LatestTokens = (props) => {
           id: uuid(),
           ref: tokenHash,
           ingredient: Number(tknD[0]),
-          amount: tknD[2],
+          amount: milligramsToKilograms(tknD[2]) + ' KG',
           customer: {
             name: data.data.data[0]?.name
           },
@@ -189,7 +190,7 @@ export const LatestTokens = (props) => {
           }
         />
         <PerfectScrollbar>
-          <Box sx={{ minWidth: 100 }}>
+          <Box sx={{ minWidth: 100, maxHeight: 400, overflowY: 'auto' }}>
             <Table>
               <TableHead>
                 <TableRow>
