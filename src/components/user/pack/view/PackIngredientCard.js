@@ -44,7 +44,7 @@ export const PackIngredientCard = ({ product, ...rest }) => (
                     variant="body1"
                 >
                     Quantity: {product.amount}<br />
-                    Factory: {product.customer.name}<br />
+                    Factory: {product.owner}<br />
                     Status: <SeverityPill
                         color={(product.status === 'ready' && 'success')
                             || (product.status === 'packed' && 'error')
@@ -63,7 +63,7 @@ export const PackIngredientCard = ({ product, ...rest }) => (
                     </AccordionSummary>
                     <AccordionDetails>
                         <Typography>
-                            {product.pastHoldersNames || 'N/A'}
+                            {product.customer.name || 'N/A'}
                         </Typography>
                     </AccordionDetails>
                 </Accordion>

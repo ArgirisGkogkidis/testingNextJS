@@ -86,16 +86,17 @@ const PackDetail = () => {
   const router = useRouter();
   const { id } = router.query;
   const [tokenData, setTokenData] = useState([])
-  // Helper function to format timestamps
-  const formatDate = (timestamp) => new Date(timestamp * 1000).toLocaleDateString("en-US");
+
   function milligramsToKilograms(milligrams) {
     return milligrams / 1000000;
   }
 
   useEffect(() => {
-    setTokenData([])
-    fetchData()
-  }, [])
+    if (id) {
+      setTokenData([])
+      fetchData()
+    }
+  }, [id])
   async function fetchData() {
     try {
       // Assuming this URL returns the packData structure shown earlier
@@ -112,6 +113,13 @@ const PackDetail = () => {
 
         const pastHolders = (await Promise.all(pastHoldersPromises)).filter(Boolean).join(', ');
 
+
+        const response = await axios.get('http://localhost:4000/api/v1/', { params: { wallet: token.holder } });
+        const user = response.data.data.user[0];
+        const tokenHolder = `${user.firstName} ${user.lastName}`;
+        console.log(tokenHolder)
+
+
         const ingredientResponse = await axios.get(`http://127.0.0.1:4000/api/v1/ingridient/${token.ingredientID}`);
         const ingredient = ingredientResponse.data.data[0];
 
@@ -122,18 +130,15 @@ const PackDetail = () => {
             ref: token.tokenHash,
             ingredient: token.ingredientID,
             amount: `${milligramsToKilograms(token.amount)} KG`,
+            owner: tokenHolder,
             customer: {
               name: pastHolders || 'N/A', // Assuming you want to display past holders as customers
             },
             createdAt: token.mintedOn * 1000,
             status: token.status === 1 ? 'ready' : (token.status === 2 ? 'transfered' : 'packed'),
-            actions: [
-              ...(token.status === 1 ? ['Transfer'] : []),
-              ...(token.status === 1 ? ['Split'] : [])
-            ],
             meta: { // Ensure this property is correctly populated
               name: ingredient.name || 'Unknown Ingredient',
-              image: ingredient.image || 'default_image_url_here'
+              image: ingredient.icon || 'default_image_url_here'
             }
           }
         ]);
