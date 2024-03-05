@@ -88,7 +88,7 @@ const Dapp = (props) => {
       await management.methods.getIngredientIDs().call().then(async ingredientIDs => {
         for (const ingredientID of ingredientIDs) {
 
-          const data = await axios.get('http://127.0.0.1:4000/api/v1/ingridient/' + ingredientID);
+          const data = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/ingridient/` + ingredientID);
 
           setPermisions(prevProducts => ([
             ...prevProducts,

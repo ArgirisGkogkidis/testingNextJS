@@ -13,7 +13,7 @@ const RecipeSelection = ({ accounts }) => {
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:4000/api/v1/recipes/byOwner/${accounts}`);
+        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/recipes/byOwner/${accounts}`);
         console.log(data)
         setRecipes(data);
       } catch (error) {

@@ -57,7 +57,7 @@ const Products = (props) => {
 
     try {
       // Make the POST request to your backend
-      const response = await axios.post('http://localhost:4000/api/v1/ingridient/', payload);
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/ingridient/`, payload);
       fetchUserPerms();
       // Handle success (e.g., showing a success message or clearing the form)
     } catch (error) {
@@ -76,7 +76,7 @@ const Products = (props) => {
     await management.methods.getIngredientIDs().call().then(async ingredientIDs => {
       for (const ingredientID of ingredientIDs) {
         console.log("Ing ID: ", ingredientID)
-        const data = await axios.get('http://127.0.0.1:4000/api/v1/ingridient/' + ingredientID);
+        const data = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/ingridient/` + ingredientID);
         console.log('dbdata', data.data.data[0]);
         setProducts(prevProducts => ([
           ...prevProducts,

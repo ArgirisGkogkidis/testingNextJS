@@ -86,7 +86,7 @@ const MintToken = (props) => {
       for (const ingredientID of ingredientIDs) {
         const canMintToken = await management.methods.get_perm_mint(accounts, ingredientID).call();
         if (canMintToken) {
-          const data = await axios.get('http://127.0.0.1:4000/api/v1/ingridient/' + ingredientID);
+          const data = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/ingridient/` + ingredientID);
 
           setTokenOptions(prevProducts => ([
             ...prevProducts,

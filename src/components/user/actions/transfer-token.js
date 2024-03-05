@@ -40,7 +40,7 @@ const TransferModal = ({ open, onClose, onTransfer, token, management }) => {
     if (open && token) {
       setRecipientAddress('');
       setRecipientOptions([])
-      const users = await axios.get('http://127.0.0.1:4000/api/v1/users');
+      const users = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/users`);
       for (const user of users.data.data) {
 
         const canReceive = await management.methods.get_perm_receive(user.wallet, token.ingredient).call();

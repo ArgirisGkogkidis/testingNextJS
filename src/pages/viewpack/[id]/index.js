@@ -106,7 +106,7 @@ const PackDetail = () => {
       for (let token of packData.tokens) {
         const pastHoldersPromises = token.pastHolders.map(async (holder) => {
           if (holder.holderAddress === "0x0000000000000000000000000000000000000000") return null;
-          const response = await axios.get('http://localhost:4000/api/v1/', { params: { wallet: holder.holderAddress } });
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/`, { params: { wallet: holder.holderAddress } });
           const user = response.data.data.user[0];
           return `${user.firstName} ${user.lastName}`;
         });
@@ -114,13 +114,13 @@ const PackDetail = () => {
         const pastHolders = (await Promise.all(pastHoldersPromises)).filter(Boolean).join(', ');
 
 
-        const response = await axios.get('http://localhost:4000/api/v1/', { params: { wallet: token.holder } });
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/`, { params: { wallet: token.holder } });
         const user = response.data.data.user[0];
         const tokenHolder = `${user.firstName} ${user.lastName}`;
         console.log(tokenHolder)
 
 
-        const ingredientResponse = await axios.get(`http://127.0.0.1:4000/api/v1/ingridient/${token.ingredientID}`);
+        const ingredientResponse = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/ingridient/${token.ingredientID}`);
         const ingredient = ingredientResponse.data.data[0];
 
         setTokenData((prevData) => [

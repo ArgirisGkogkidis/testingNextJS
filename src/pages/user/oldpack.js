@@ -66,7 +66,7 @@ const PackToken = (props) => {
                 ]))
                 idCounter += 1
 
-                const data = await axios.get('http://localhost:4000/api/v1/', { params: { wallet: tknD[3] } });
+                const data = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/`, { params: { wallet: tknD[3] } });
                 const user = data.data.data.user[0]
                 const userName = user.firstName + " " + user.lastName
                 setDataRows((previousRow) => [...previousRow, { id: idCounter, tokenhash: pendingToken, tokenid: tknD[0], tokensender: userName, tokenquantity: tknD[1] }])

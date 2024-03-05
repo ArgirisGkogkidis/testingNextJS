@@ -20,7 +20,7 @@ const PackStepper = (props) => {
   useEffect(() => {
     const fetchIngredients = async () => {
       try {
-        const response = await axios.get('http://localhost:4000/api/v1/ingridient/all');
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/ingridient/all`);
         setAvailableIngredients(response.data.data);
       } catch (error) {
         console.error('Failed to fetch ingredients', error);

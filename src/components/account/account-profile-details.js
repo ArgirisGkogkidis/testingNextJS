@@ -66,7 +66,7 @@ export const AccountProfileDetails = (props) => {
       values['wallet'] = props.user.wallet
 
       console.log(values)
-      axios.patch('http://127.0.0.1:4000/api/v1/', values).then(response => {
+      axios.patch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/`, values).then(response => {
         console.log(response);
       })
       .catch((reason) => {

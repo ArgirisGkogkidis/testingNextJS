@@ -40,14 +40,14 @@ const RecipeForm = (props) => {
       if (!id) return;
 
       try {
-        const response = await axios.get('http://localhost:4000/api/v1/ingridient/all');
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/ingridient/all`);
         setAvailableIngredients(response.data.data);
       } catch (error) {
         console.error('Failed to fetch ingredients', error);
       }
 
       try {
-        const response = await axios.get(`http://localhost:4000/api/v1/recipes/${id}`);
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/recipes/${id}`);
         const data = response.data.data.doc;
         console.log('Recipe Data', data);
         // Convert ingredient quantities from grams if necessary and update form state
@@ -95,7 +95,7 @@ const RecipeForm = (props) => {
 
     console.log(recipeToSave);
     try {
-      await axios.post('http://localhost:4000/api/v1/recipes', recipeToSave);
+      await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/recipes`, recipeToSave);
       // Handle success - e.g., clear the form, show a message
     } catch (error) {
       alert(error)

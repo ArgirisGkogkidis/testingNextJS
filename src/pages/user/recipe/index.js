@@ -15,7 +15,7 @@ const RecipeForm = (props) => {
     setProducts([]);
     const fetchRecipes = async () => {
       try {
-        const recipes = await axios.get('http://localhost:4000/api/v1/recipes/byOwner/' + accounts);
+        const recipes = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/recipes/byOwner/` + accounts);
 
         for (const recipe of recipes.data) {
           console.log(recipe)

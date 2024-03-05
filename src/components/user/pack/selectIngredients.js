@@ -45,7 +45,7 @@ const IngredientSelection = (props) => {
     const tknD = await tracking.methods.getTokenData(tokenHash).call()
 
     if (tknD[3] === accounts && Number(tknD[1]) === 1) {
-      const data = await axios.get('http://127.0.0.1:4000/api/v1/ingridient/' + tknD[0]);
+      const data = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/ingridient/` + tknD[0]);
 
       setIngredients(prevPermisions => ([
         ...prevPermisions,

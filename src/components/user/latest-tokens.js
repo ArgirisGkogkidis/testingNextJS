@@ -81,7 +81,7 @@ export const LatestTokens = (props) => {
     const hasSplitPermission = userperms?.canSplit ?? false;
 
     if (tknD[3] === accounts && idCounter <= 8) {
-      const data = await axios.get('http://127.0.0.1:4000/api/v1/ingridient/' + tknD[0]);
+      const data = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/ingridient/` + tknD[0]);
 
       setTokenData(prevPermisions => ([
         ...prevPermisions,
