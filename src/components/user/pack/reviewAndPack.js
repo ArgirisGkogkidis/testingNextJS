@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Button, Typography, Box, Grid } from '@mui/material';
 import QRCode from 'qrcode.react';
 import { usePackCreation } from './RecipeContext';
+import { useRouter } from 'next/router';
 
 const ReviewAndConfirm = (props) => {
   const { tracking, accounts } = props;
   const { selectedRecipe, selectedIngredients, productionQuantity, availableIngredients } = usePackCreation();
   const [qrValue, setQrValue] = useState(''); // Placeholder for QR code value
   const [quantities, setQuantities] = useState([]); // Placeholder for QR code value
+  const router = useRouter();
 
   // Generate QR code value based on selected options
   const generateQrCode = () => {
@@ -17,15 +19,26 @@ const ReviewAndConfirm = (props) => {
       quantity: productionQuantity,
       ingredients: selectedIngredients,
     };
-    console.log('qrData', JSON.stringify(qrData));
+    
     setQrValue(JSON.stringify(qrData));
   };
 
   // Placeholder function for final submission
   const handleSubmit = async () => {
     console.log('Submit data to backend or perform final action here');
-    const rs = await tracking.methods.createSuperPack(productionQuantity, selectedIngredients, quantities).send({ from: accounts });
-    console.log(rs)
+    // const rs = await tracking.methods.createSuperPack(productionQuantity, selectedIngredients, quantities).send({ from: accounts });
+    try {
+      const rs = await tracking.methods.createSuperPack(productionQuantity, selectedIngredients, quantities).send({ from: accounts });
+      console.log(rs);
+      // Here, you might send the data to a backend or generate the PDF
+  
+      // On successful submit, redirect to another url
+      router.push('/user/viewpack'); // Replace '/your-success-url' with your target URL
+    } catch (error) {
+      console.error('An error occurred during the submit:', error);
+      // Handle submit error here (optional)
+    }
+    // console.log(rs)
     // Here, you might send the data to a backend or generate the PDF
   };
 
