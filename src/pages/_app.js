@@ -13,12 +13,14 @@ import InitialLoading from '../components/custom-loading'
 import { SnackbarProvider } from 'notistack';
 import Slide from '@mui/material/Slide';
 import Register from './register'
+import { useRouter } from 'next/router';
 
 const clientSideEmotionCache = createEmotionCache();
 
 const App = (props) => {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
   const isRegistered = false;
+  const router = useRouter();
   const getLayout = Component.getLayout ?? ((page) => page);
   React.useEffect(() => {
     if (window.ethereum) {
@@ -28,6 +30,8 @@ const App = (props) => {
     }
 
   }, [])
+  // Check if the current page is the specific page where you don't want Web3
+  const shouldExcludeWeb3 = router.pathname.startsWith("/viewpack/[id]");
 
   return (
     <CacheProvider value={emotionCache}>
@@ -51,7 +55,11 @@ const App = (props) => {
             }}
             TransitionComponent={Slide}>
 
-            {/* {getLayout(<Component {...pageProps} />)} */}
+            {
+              shouldExcludeWeb3 ? (
+                // Directly render the component without Web3 for specific pages
+                getLayout(<Component {...pageProps} />)
+              ) : (
 
             <Web3Container
               renderLoading={({ open, message }) => <InitialLoading open={open}
@@ -76,7 +84,7 @@ const App = (props) => {
                     </DashboardLayout>
                   </>
               )}
-            />
+            />)}
           </SnackbarProvider>
         </ThemeProvider>
       </LocalizationProvider>
