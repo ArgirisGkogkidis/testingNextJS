@@ -37,6 +37,21 @@ const IngredientModal = ({ open, onClose, onSaveIngredient, ingredient, updateIn
     }
   };
 
+  const handlePaste = (e) => {
+    const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+    for (const item of items) {
+      if (item.type.indexOf('image') === 0) {
+        const file = item.getAsFile();
+  
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          updateIngredient('icon', reader.result);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(ingredient);
@@ -69,7 +84,7 @@ const IngredientModal = ({ open, onClose, onSaveIngredient, ingredient, updateIn
           <Typography id="ingredient-modal-title" variant="h6" component="h2">
             Add Ingredient
           </Typography>
-          <Box component="form" noValidate sx={{ mt: 2, width: '100%' }} onSubmit={handleSubmit}>
+          <Box component="form" noValidate sx={{ mt: 2, width: '100%' }} onSubmit={handleSubmit} onPaste={handlePaste}>
             <TextField
               fullWidth
               id="ingredient-id"
