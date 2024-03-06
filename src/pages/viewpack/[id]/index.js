@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router'
-import { Box, Container, Typography, Grid } from '@mui/material';
+import { Box, Container, Typography, Grid, Card, CardContent, CardMedia, Skeleton } from '@mui/material';
 import { PackIngredientCard } from 'src/components/user/pack/view/PackIngredientCard';
 import axios from 'axios';
+import { format } from 'date-fns';
 import { v4 as uuid } from 'uuid'; // Ensure you have 'uuid' installed
 
 // const packData = {
@@ -83,6 +84,7 @@ import { v4 as uuid } from 'uuid'; // Ensure you have 'uuid' installed
 // }
 
 const PackDetail = () => {
+  const [loading, setLoading] = useState(false)
   const router = useRouter();
   const { id } = router.query;
   const [tokenData, setTokenData] = useState([])
@@ -93,7 +95,7 @@ const PackDetail = () => {
   }
 
   useEffect(() => {
-    console.log('qwerqwer');
+    setLoading(true)
     if (id) {
       console.log(id)
       setTokenData([])
@@ -102,29 +104,48 @@ const PackDetail = () => {
   }, [id])
   async function fetchData() {
     try {
-      console.log("will get for:",id);
+      console.log("will get for:", id);
       // Assuming this URL returns the packData structure shown earlier
       const packResponse = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/pack-info/${id}`);
-      console.log(packResponse)
       const packData = packResponse.data;
-      setPackData( packData );
+      // setPackData(packData);
+      const packHolder = '';
+
       for (let token of packData.tokens) {
-        const pastHoldersPromises = token.pastHolders.map(async (holder) => {
+
+        const firstHolderTimestamp = token.mintedOn;
+        let previousTimestamp = firstHolderTimestamp;
+        const pastHoldersPromises = token.pastHolders.map(async (holder, index) => {
           if (holder.holderAddress === "0x0000000000000000000000000000000000000000") return null;
           const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/`, { params: { wallet: holder.holderAddress } });
           const user = response.data.data.user[0];
-          return `${user.firstName} ${user.lastName}`;
+          const userName = `${user.firstName} ${user.lastName}`;
+
+          // Determine the label based on the index
+          const label = index === 0 ? 'Produced by' : 'Received by';
+          // Use the previous timestamp for all holders except the first
+          const timestamp = index === 0 ? firstHolderTimestamp : previousTimestamp;
+          previousTimestamp = token.pastHolders[index].timestamp; // Update the previousTimestamp for the next iteration
+
+          // Convert timestamp to readable format
+          const date = format(new Date(timestamp * 1000), 'HH:mm:ss dd/MM/yyyy');
+
+          return `${label} ${userName} on ${date}`;
         });
 
-        const pastHolders = (await Promise.all(pastHoldersPromises)).filter(Boolean).join(', ');
+        const pastHolders = (await Promise.all(pastHoldersPromises)).filter(Boolean);//.join('\n');
 
 
         const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/`, { params: { wallet: token.holder } });
         const user = response.data.data.user[0];
         const tokenHolder = `${user.firstName} ${user.lastName}`;
+
+        const currentHolderString = `Received by ${tokenHolder} on ${format(new Date(previousTimestamp * 1000), 'HH:mm:ss dd/MM/yyyy')}`;
+        // Add the current holder string to the past holders array
+        pastHolders.push(currentHolderString);
+        pastHolders = pastHolders.join('\n');
         console.log(tokenHolder)
-
-
+        packHolder = tokenHolder;
         const ingredientResponse = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/ingridient/${token.ingredientID}`);
         const ingredient = ingredientResponse.data.data[0];
 
@@ -134,8 +155,7 @@ const PackDetail = () => {
             id: uuid(),
             ref: token.tokenHash,
             ingredient: token.ingredientID,
-            amount: `${milligramsToKilograms(token.amount)} KG`,
-            owner: tokenHolder,
+            amount: `${milligramsToKilograms(token.amount) / packData.totalPacks} KG`,
             customer: {
               name: pastHolders || 'N/A', // Assuming you want to display past holders as customers
             },
@@ -148,6 +168,16 @@ const PackDetail = () => {
           }
         ]);
       }
+
+      packData = {
+        ...packData,
+        holder: packHolder,
+        _createdOn: Number(packData.createdOn) * 1000
+      };
+
+      setPackData(packData);
+      console.log(packData);
+      setLoading(false)
     } catch (error) {
       console.error("Error fetching pack data:", error);
     }
@@ -155,19 +185,47 @@ const PackDetail = () => {
 
   return (
     <>
+
       <Box component="main" sx={{ flexGrow: 1, py: 8 }}>
         <Container maxWidth="lg">
-          <Typography sx={{ m: 1 }} variant="h4">View Pack ({id})</Typography>
-          <Typography sx={{ m: 1 }} variant="body">Total packs ({packData.totalPacks})</Typography>
-          <Box sx={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', mt: 3 }}>
-            <Grid container spacing={3}>
-              {tokenData.map((token, index) => (
-                <PackIngredientCard key={index} product={token} />
-              ))}
-            </Grid>
-          </Box>
+          {loading ? <Skeleton sx={{ height: 235 }}
+            animation="wave"
+            variant="rectangular" /> :
+            packData ? <>
+              <Card sx={{ display: 'flex', mb: 3, alignItems: 'center' }}>
+                <CardMedia
+                  component="img"
+                  sx={{ width: '33%', maxWidth: '33%', height: 'auto', maxHeight: 140, objectFit: 'contain', }} // Set a maximum height here
+                  image='/static/images/products/salad.png'
+                  alt="Pack Image"
+                />
+                {/* CardContent for text, taking the remaining space */}
+                <CardContent sx={{ flex: '1', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                  <Typography sx={{ m: 1 }} variant="h4">
+                    (Product Name)
+                  </Typography>
+                  <Typography sx={{ m: 1 }} variant="body1">
+                    Produced by: {packData.holder} on {packData._createdOn ? format(new Date(packData._createdOn), 'HH:mm:ss dd/MM/yyyy') : ''}
+                  </Typography>
+                  <Typography sx={{ m: 1 }} variant="body1">
+                    Total products made: ({packData.totalPacks})
+                  </Typography>
+
+                </CardContent>
+              </Card>
+              <Box sx={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', mt: 3 }}>
+                <Grid container spacing={3}>
+                  {tokenData.map((token, index) => (
+                    <PackIngredientCard key={index} product={token} />
+                  ))}
+                </Grid>
+              </Box>
+            </>
+              : 'No info found'
+          }
         </Container>
       </Box>
+
     </>
   );
 };
