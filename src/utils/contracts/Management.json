@@ -8999,10 +8999,16 @@
       "links": {},
       "address": "0xB67153A2ca15f63AecAe509028B42F4038d669EA",
       "transactionHash": "0x275c202314927ce4668abb569ba488dc5ee9e71af62babb4cf203e43094f51d5"
+    },
+    "1709717922936": {
+      "events": {},
+      "links": {},
+      "address": "0xBA53750F0668e8Ed42E8C292b5d9266D0D9fCED3",
+      "transactionHash": "0x8567ef70fb6a5cb6b4e8cffcd03fdb434d9145e5010d5e2c739eff4896e68bb7"
     }
   },
   "schemaVersion": "3.4.16",
-  "updatedAt": "2024-03-05T19:08:56.558Z",
+  "updatedAt": "2024-03-06T09:39:21.390Z",
   "networkType": "ethereum",
   "devdoc": {
     "details": "Store & retrieve value in a variable",

@@ -32520,10 +32520,16 @@
       "links": {},
       "address": "0xDa8dc159879A95889f7d332A7A3A9F01bC8fa9d4",
       "transactionHash": "0xa20ec1750875b9bb1acc586a489629079d5acf03b905a237ad84be04168b4d49"
+    },
+    "1709717922936": {
+      "events": {},
+      "links": {},
+      "address": "0xA0ba5A1E5F46Dfb42DF3b3E278538b61BFC057b2",
+      "transactionHash": "0x1d9f8fffe2f763ee0d9b66a73213ae00b867ab87cef44de5cbf7fc65e09e532d"
     }
   },
   "schemaVersion": "3.4.16",
-  "updatedAt": "2024-03-05T19:08:56.571Z",
+  "updatedAt": "2024-03-06T09:39:21.398Z",
   "networkType": "ethereum",
   "devdoc": {
     "details": "Store & retrieve value in a variable",
