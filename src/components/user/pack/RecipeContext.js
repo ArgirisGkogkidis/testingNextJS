@@ -8,7 +8,7 @@ export const PackCreationProvider = ({ children }) => {
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [selectedIngredients, setSelectedIngredients] = useState([]);
   const [productionQuantity, setProductionQuantity] = useState(1); // Default to 1 or a sensible default for your application
-
+  const [quantities, setQuantities] = useState([]);
   const [availableIngredients, setAvailableIngredients] = useState([]);
 
   // More state as necessary
@@ -26,7 +26,9 @@ export const PackCreationProvider = ({ children }) => {
     productionQuantity,
     updateProductionQuantity,
     availableIngredients,
-    setAvailableIngredients
+    setAvailableIngredients,
+    quantities,
+    setQuantities,
     // More setters as necessary
   };
 

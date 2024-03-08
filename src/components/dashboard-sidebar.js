@@ -61,6 +61,7 @@ export const DashboardSidebar = (props) => {
     const dynamicNavigation = [
       { href: '/user', icon: (<ChartBarIcon fontSize="small" />), title: 'Dashboard' },
       ...(userPerms.canPack ? [{ href: '/user/recipe', icon: (<HorizontalSplitIcon fontSize="small" />), title: 'Manage Recipes' }] : []),
+      ...(userPerms.canPack ? [{ href: '/user/viewpack', icon: (<HorizontalSplitIcon fontSize="small" />), title: 'My Packs' }] : []),
       ...(userPerms.canPack ? [{ href: '/user/pack', icon: (<HorizontalSplitIcon fontSize="small" />), title: 'Manage Pack' }] : []),
       // Add more conditions based on permissions
     ];

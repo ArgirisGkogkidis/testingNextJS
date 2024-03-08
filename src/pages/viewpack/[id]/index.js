@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/router'
-import { Box, Container, Typography, Grid, Card, CardContent, CardMedia, Skeleton } from '@mui/material';
+import { useRouter } from 'next/router';
+import {
+  Box,
+  Container,
+  Typography,
+  Grid,
+  Card,
+  CardContent,
+  CardMedia,
+  Skeleton,
+} from '@mui/material';
 import PackIngredientCard from 'src/components/user/pack/view/PackIngredientCard';
 import axios from 'axios';
 import { format } from 'date-fns';
@@ -83,41 +92,67 @@ import { v4 as uuid } from 'uuid'; // Ensure you have 'uuid' installed
 //   ]
 // }
 
+const sensorData = {
+  "measurements": [
+      {
+          "temp_min": 19.08789196612497,
+          "temp_avg": 19.246628180022547,
+          "temp_max": 19.443045700770583,
+          "hum_min": 51.96002136263066,
+          "hum_avg": 52.45644820833652,
+          "hum_max": 52.910658426794846,
+          "stage": "processing"
+      },
+      {
+          "temp_min": 19.05851834897382,
+          "temp_avg": 19.176606223985484,
+          "temp_max": 19.29884794384681,
+          "hum_min": 52.668039978637374,
+          "hum_avg": 53.00729889880726,
+          "hum_max": 53.28297856107424,
+          "stage": "storage before processing"
+      }
+  ]
+};
+
 const PackDetail = () => {
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
   const { id } = router.query;
-  const [tokenData, setTokenData] = useState([])
-  const [packData, setPackData] = useState([])
+  const [tokenData, setTokenData] = useState([]);
+  const [packData, setPackData] = useState([]);
 
   function milligramsToKilograms(milligrams) {
     return milligrams / 1000000;
   }
 
   useEffect(() => {
-    setLoading(true)
+    setLoading(true);
     if (id) {
-      console.log(id)
-      setTokenData([])
-      fetchData()
+      console.log(id);
+      setTokenData([]);
+      fetchData();
     }
-  }, [id])
+  }, [id]);
   async function fetchData() {
     try {
-      console.log("will get for:", id);
+      console.log('will get for:', id);
       // Assuming this URL returns the packData structure shown earlier
-      const packResponse = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/pack-info/${id}`);
+      const packResponse = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/pack-info/${id}`,
+      );
       const packData = packResponse.data;
       // setPackData(packData);
       const packHolder = '';
 
       for (let token of packData.tokens) {
-
         const firstHolderTimestamp = token.parentMinted;
         let previousTimestamp = firstHolderTimestamp;
         const pastHoldersPromises = token.pastHolders.map(async (holder, index) => {
-          if (holder.holderAddress === "0x0000000000000000000000000000000000000000") return null;
-          const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/`, { params: { wallet: holder.holderAddress } });
+          if (holder.holderAddress === '0x0000000000000000000000000000000000000000') return null;
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/`, {
+            params: { wallet: holder.holderAddress },
+          });
           const user = response.data.data.user[0];
           const userName = `${user.firstName} ${user.lastName}`;
 
@@ -133,35 +168,65 @@ const PackDetail = () => {
           return `${label} ${userName} on ${date}`;
         });
 
-        const pastHolders = (await Promise.all(pastHoldersPromises)).filter(Boolean);//.join('\n');
+        const pastHolders = (await Promise.all(pastHoldersPromises)).filter(Boolean); //.join('\n');
 
-
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/`, { params: { wallet: token.holder } });
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/`, {
+          params: { wallet: token.holder },
+        });
         const user = response.data.data.user[0];
         const tokenHolder = `${user.firstName} ${user.lastName}`;
 
-        const currentHolderString = `Received by ${tokenHolder} on ${format(new Date(previousTimestamp * 1000), 'HH:mm:ss dd/MM/yyyy')}`;
+        const currentHolderString = `Received by ${tokenHolder} on ${format(
+          new Date(previousTimestamp * 1000),
+          'HH:mm:ss dd/MM/yyyy',
+        )}`;
         // Add the current holder string to the past holders array
         pastHolders.push(currentHolderString);
         pastHolders = pastHolders.join('\n');
-        console.log('Holders:', pastHolders)
+        console.log('Holders:', pastHolders);
         packHolder = tokenHolder;
-        const ingredientResponse = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/ingridient/${token.ingredientID}`);
+        const ingredientResponse = await axios.get(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/ingridient/${token.ingredientID}`,
+        );
         const ingredient = ingredientResponse.data.data[0];
 
         const payload = {
           ingredient: token.ingredientID,
-          time_start: "2024-03-06 17:00:00",
-          time_stop: "2024-03-06 18:00:00"
+          time_start: format(new Date(previousTimestamp * 1000), 'yyyy-MM-dd HH:mm:ss'),
+          time_stop: format(new Date(Number(packData.createdOn) * 1000), 'yyyy-MM-dd HH:mm:ss'),
         };
-        // await axios.post('https://potpan.zoku.space/measurements_per_ingredient/',payload) .then((response) => {
-        await axios.post('http://10.31.20.65/measurements_per_ingredient/',payload) .then((response) => {
+        console.log(payload);
+        // await axios
+        //   .post('https://potpan.zoku.space/measurements_per_ingredient/', payload)
+        //   .then((response) => {
+        //     // await axios.post('http://10.31.20.65/measurements_per_ingredient/',payload) .then((response) => {
+        //     console.log(response);
+        //     measurement = response.measurements;
+        //   })
+        //   .catch((error) => {
+        //     measurement = measurements;
+        //     console.error(
+        //       'Error making request:',
+        //       error.response ? error.response.data : error.message,
+        //     );
+        //   });
+
+        let measurement = ''; // Use let for variables that will be reassigned.
+
+        try {
+          const response = await axios.post(
+            'https://potpan.zoku.space/measurements_per_ingredient/',
+            payload,
+          );
           console.log(response);
-        })
-        .catch((error) => {
-          console.error('Error making request:', error.response ? error.response.data : error.message);
-        });
-        
+          measurement = response.data.measurements; // Make sure to access .data for the response payload
+        } catch (error) {
+          measurement = sensorData.measurements; // Assign default values in case of error
+          console.error(
+            'Error making request:',
+            error.response ? error.response.data : error.message,
+          );
+        }
 
         setTokenData((prevData) => [
           ...prevData,
@@ -172,60 +237,84 @@ const PackDetail = () => {
             amount: `${milligramsToKilograms(token.amount) / packData.totalPacks} KG`,
             pastHolders: pastHolders || 'N/A', // Assuming you want to display past holders as customers
             createdAt: token.mintedOn * 1000,
-            status: token.status === 1 ? 'ready' : (token.status === 2 ? 'transfered' : 'packed'),
-            meta: { // Ensure this property is correctly populated
+            status: token.status === 1 ? 'ready' : token.status === 2 ? 'transfered' : 'packed',
+            meta: {
+              // Ensure this property is correctly populated
               name: ingredient.name || 'Unknown Ingredient',
-              image: ingredient.icon || 'default_image_url_here'
-            }
-          }
+              image: ingredient.icon || 'default_image_url_here',
+            },
+            measurements: measurement,
+          },
         ]);
       }
 
       packData = {
         ...packData,
         holder: packHolder,
-        _createdOn: Number(packData.createdOn) * 1000
+        _createdOn: Number(packData.createdOn) * 1000,
       };
 
       setPackData(packData);
       console.log(packData);
-      setLoading(false)
+      setLoading(false);
     } catch (error) {
-      console.error("Error fetching pack data:", error);
+      console.error('Error fetching pack data:', error);
     }
   }
 
   return (
     <>
-
-      <Box component="main" sx={{ flexGrow: 1, py: 8 }}>
-        <Container maxWidth="lg">
-          {loading ? <Skeleton sx={{ height: 235 }}
-            animation="wave"
-            variant="rectangular" /> :
-            packData ? <>
+      <Box component='main' sx={{ flexGrow: 1, py: 8 }}>
+        <Container maxWidth='lg'>
+          {loading ? (
+            <Skeleton sx={{ height: 235 }} animation='wave' variant='rectangular' />
+          ) : packData ? (
+            <>
               <Card sx={{ display: 'flex', mb: 3, alignItems: 'center' }}>
                 <CardMedia
-                  component="img"
-                  sx={{ width: '33%', maxWidth: '33%', height: 'auto', maxHeight: 140, objectFit: 'contain', }} // Set a maximum height here
+                  component='img'
+                  sx={{
+                    width: '33%',
+                    maxWidth: '33%',
+                    height: 'auto',
+                    maxHeight: 140,
+                    objectFit: 'contain',
+                  }} // Set a maximum height here
                   image='/static/images/products/salad.png'
-                  alt="Pack Image"
+                  alt='Pack Image'
                 />
                 {/* CardContent for text, taking the remaining space */}
-                <CardContent sx={{ flex: '1', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                  <Typography sx={{ m: 1 }} variant="h4">
+                <CardContent
+                  sx={{
+                    flex: '1',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Typography sx={{ m: 1 }} variant='h4'>
                     (Product Name)
                   </Typography>
-                  <Typography sx={{ m: 1 }} variant="body1">
-                    Produced by: {packData.holder} on {packData._createdOn ? format(new Date(packData._createdOn), 'HH:mm:ss dd/MM/yyyy') : ''}
+                  <Typography sx={{ m: 1 }} variant='body1'>
+                    Produced by: {packData.holder} on{' '}
+                    {packData._createdOn
+                      ? format(new Date(packData._createdOn), 'HH:mm:ss dd/MM/yyyy')
+                      : ''}
                   </Typography>
-                  <Typography sx={{ m: 1 }} variant="body1">
+                  <Typography sx={{ m: 1 }} variant='body1'>
                     Total products made: ({packData.totalPacks})
                   </Typography>
-
                 </CardContent>
               </Card>
-              <Box sx={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', mt: 3 }}>
+              <Box
+                sx={{
+                  alignItems: 'center',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  mt: 3,
+                }}
+              >
                 <Grid container spacing={3}>
                   {tokenData.map((token, index) => (
                     <PackIngredientCard key={index} product={token} />
@@ -233,11 +322,11 @@ const PackDetail = () => {
                 </Grid>
               </Box>
             </>
-              : 'No info found'
-          }
+          ) : (
+            'No info found'
+          )}
         </Container>
       </Box>
-
     </>
   );
 };
