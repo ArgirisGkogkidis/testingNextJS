@@ -22,11 +22,11 @@ const PackStepper = (props) => {
     productionQuantity,
     availableIngredients,
     setAvailableIngredients,
-    quantities
+    quantities,
   } = usePackCreation();
   const steps = getSteps();
   const router = useRouter();
-  
+
   useEffect(() => {
     const fetchIngredients = async () => {
       try {
@@ -56,8 +56,18 @@ const PackStepper = (props) => {
       const rs = await tracking.methods
         .createSuperPack(productionQuantity, selectedIngredients, quantities)
         .send({ from: accounts });
-      console.log(rs);
+      console.log('response', rs.events.PackCreated.returnValues[1]);
       // Here, you might send the data to a backend or generate the PDF
+
+      const response = await axios.patch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/recipes/${selectedRecipe._id}/packs`,
+        {
+          packIds: [rs.events.PackCreated.returnValues[1]],
+        },
+      );
+
+      console.log('Recipe updated successfully', response.data);
+      // return response.data;
 
       // On successful submit, redirect to another url
       router.push('/user/viewpack'); // Replace '/your-success-url' with your target URL

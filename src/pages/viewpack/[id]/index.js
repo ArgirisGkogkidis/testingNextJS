@@ -93,26 +93,26 @@ import { v4 as uuid } from 'uuid'; // Ensure you have 'uuid' installed
 // }
 
 const sensorData = {
-  "measurements": [
-      {
-          "temp_min": 19.08789196612497,
-          "temp_avg": 19.246628180022547,
-          "temp_max": 19.443045700770583,
-          "hum_min": 51.96002136263066,
-          "hum_avg": 52.45644820833652,
-          "hum_max": 52.910658426794846,
-          "stage": "processing"
-      },
-      {
-          "temp_min": 19.05851834897382,
-          "temp_avg": 19.176606223985484,
-          "temp_max": 19.29884794384681,
-          "hum_min": 52.668039978637374,
-          "hum_avg": 53.00729889880726,
-          "hum_max": 53.28297856107424,
-          "stage": "storage before processing"
-      }
-  ]
+  measurements: [
+    {
+      temp_min: 19.08789196612497,
+      temp_avg: 19.246628180022547,
+      temp_max: 19.443045700770583,
+      hum_min: 51.96002136263066,
+      hum_avg: 52.45644820833652,
+      hum_max: 52.910658426794846,
+      stage: 'processing',
+    },
+    {
+      temp_min: 19.05851834897382,
+      temp_avg: 19.176606223985484,
+      temp_max: 19.29884794384681,
+      hum_min: 52.668039978637374,
+      hum_avg: 53.00729889880726,
+      hum_max: 53.28297856107424,
+      stage: 'storage before processing',
+    },
+  ],
 };
 
 const PackDetail = () => {
@@ -144,6 +144,16 @@ const PackDetail = () => {
       const packData = packResponse.data;
       // setPackData(packData);
       const packHolder = '';
+
+      let recipeName = 'nan'
+      try{
+        console.log(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/recipes/by-pack/${id}`)
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/recipes/by-pack/${id}`,
+      );
+      recipeName = response.data.title || 'A Salad';
+      }
+      catch(error){console.log(error)}
 
       for (let token of packData.tokens) {
         const firstHolderTimestamp = token.parentMinted;
@@ -251,6 +261,7 @@ const PackDetail = () => {
       packData = {
         ...packData,
         holder: packHolder,
+        resipeName: recipeName,
         _createdOn: Number(packData.createdOn) * 1000,
       };
 
@@ -293,7 +304,7 @@ const PackDetail = () => {
                   }}
                 >
                   <Typography sx={{ m: 1 }} variant='h4'>
-                    (Product Name)
+                    {packData.resipeName}
                   </Typography>
                   <Typography sx={{ m: 1 }} variant='body1'>
                     Produced by: {packData.holder} on{' '}
