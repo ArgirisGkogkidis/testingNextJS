@@ -1,23 +1,32 @@
 import React, { useState, useEffect } from 'react';
 // import { TextField, Button, Container, Box, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import {
-  Box, Container, TextField, Button, Select, MenuItem, FormControl, InputLabel,
-  Grid, Typography, IconButton
+  Box,
+  Container,
+  TextField,
+  Button,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Grid,
+  Typography,
+  IconButton,
 } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import axios from 'axios';
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/router';
 
 const RecipeForm = (props) => {
-  const router = useRouter()
-  const { id } = router.query
-  const { accounts } = props
+  const router = useRouter();
+  const { id } = router.query;
+  const { accounts } = props;
   const [recipe, setRecipe] = useState({
     title: '',
     totalUnits: '',
     ingredients: [{ code: '', quantity: '', unit: 'Grams', shelfLife: '' }],
-    owner: accounts
+    owner: accounts,
   });
 
   const handleRecipeChange = (e) => {
@@ -30,35 +39,51 @@ const RecipeForm = (props) => {
     setRecipe({ ...recipe, ingredients: updatedIngredients });
   };
 
-
   const [availableIngredients, setAvailableIngredients] = useState([]);
 
   useEffect(() => {
-
     // Fetch recipe data if an ID is provided
     const fetchRecipe = async () => {
       if (!id) return;
 
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/ingridient/all`);
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/ingridient/all`,
+        );
         setAvailableIngredients(response.data.data);
       } catch (error) {
         console.error('Failed to fetch ingredients', error);
       }
 
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/recipes/${id}`);
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/recipes/${id}`,
+        );
         const data = response.data.data.doc;
         console.log('Recipe Data', data);
         // Convert ingredient quantities from grams if necessary and update form state
-        const updatedIngredients = await Promise.all(data.ingredients.map(async ingredient => {
-          console.log('Ing', ingredient.code);
-          return {
-            ...ingredient,
-            quantity: ingredient.unit === 'Grams' ? ingredient.quantity : ingredient.quantity / 1000,
-            unit: ingredient.unit === 'Grams' ? 'Grams' : 'KG',
-          };
-        }));
+        const updatedIngredients = await Promise.all(
+          data.ingredients.map(async (ingredient) => {
+            console.log('Ing', ingredient.code);
+            // Initialize a conversion factor
+            let conversionFactor = 1; // Default for grams
+
+            // Adjust the conversion factor based on the unit
+            if (ingredient.unit === 'KG') {
+              conversionFactor = 1000; // Convert kilograms to grams
+            } else if (ingredient.unit === 'Milligrams') {
+              conversionFactor = 0.001; // Convert milligrams to grams
+            }
+
+            // Apply the conversion factor to the quantity
+            const quantityInGrams = ingredient.quantity * conversionFactor;
+            return {
+              ...ingredient,
+              quantity: quantityInGrams, //ingredient.unit === 'Grams' ? ingredient.quantity : ingredient.quantity / 1000,
+              unit: 'Grams', //ingredient.unit === 'Grams' ? 'Grams' : 'KG',
+            };
+          }),
+        );
         setRecipe({ ...data, ingredients: updatedIngredients });
         console.log('Final recipe', recipe);
       } catch (error) {
@@ -84,7 +109,11 @@ const RecipeForm = (props) => {
     // Convert all ingredient quantities to grams if needed
     const ingredientsInGrams = recipe.ingredients.map((ingredient) => ({
       ...ingredient,
-      quantity: ingredient.unit === 'KG' ? convertKgToMilligrams(ingredient.quantity) : convertKgToMilligrams(gramsToKilograms(ingredient.quantity)), unit: 'Milligrams', // Standardize unit
+      quantity:
+        ingredient.unit === 'KG'
+          ? convertKgToMilligrams(ingredient.quantity)
+          : convertKgToMilligrams(gramsToKilograms(ingredient.quantity)),
+      unit: 'Milligrams', // Standardize unit
     }));
 
     // Prepare the recipe with standardized ingredient quantities
@@ -98,7 +127,7 @@ const RecipeForm = (props) => {
       await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/recipes`, recipeToSave);
       // Handle success - e.g., clear the form, show a message
     } catch (error) {
-      alert(error)
+      alert(error);
     }
   };
   const addIngredient = () => {
@@ -117,101 +146,111 @@ const RecipeForm = (props) => {
   return (
     <Container>
       <Box
-        component="main"
+        component='main'
         sx={{
           flexGrow: 1,
           py: 8,
         }}
       >
-        <Typography variant="h4" gutterBottom>
+        <Typography variant='h4' gutterBottom>
           Create Recipe
         </Typography>
-        <Box component="form" noValidate autoComplete="off" onSubmit={handleSubmit} sx={{ mt: 3 }}>
+        <Box component='form' noValidate autoComplete='off' onSubmit={handleSubmit} sx={{ mt: 3 }}>
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <TextField
-                name="title"
-                label="Recipe Title"
+                name='title'
+                label='Recipe Title'
                 value={recipe.title}
                 onChange={handleRecipeChange}
                 fullWidth
-                variant="outlined"
+                variant='outlined'
               />
             </Grid>
             <Grid item xs={12}>
               <TextField
-                name="totalUnits"
-                label="Total Units"
+                name='totalUnits'
+                label='Total Units'
                 value={recipe.totalUnits}
                 onChange={handleRecipeChange}
                 fullWidth
-                variant="outlined"
+                variant='outlined'
               />
             </Grid>
             {recipe.ingredients.map((ingredient, index) => (
               <React.Fragment key={index}>
                 <Grid item xs={3}>
-                  <FormControl fullWidth variant="outlined">
+                  <FormControl fullWidth variant='outlined'>
                     <InputLabel>Select Ingredient</InputLabel>
                     <Select
-                      name="code"
+                      name='code'
                       value={ingredient.code}
                       onChange={(e) => handleIngredientChange(index, e)}
                     >
                       {availableIngredients.map((ing) => (
-                        <MenuItem key={ing._id} value={ing._id}>{ing.name}</MenuItem>
+                        <MenuItem key={ing._id} value={ing._id}>
+                          {ing.name}
+                        </MenuItem>
                       ))}
                     </Select>
                   </FormControl>
                 </Grid>
                 <Grid item xs={3}>
                   <TextField
-                    name="quantity"
-                    label="Quantity"
+                    name='quantity'
+                    label='Quantity'
                     value={ingredient.quantity}
                     onChange={(e) => handleIngredientChange(index, e)}
                     fullWidth
-                    variant="outlined"
+                    variant='outlined'
                   />
                 </Grid>
                 <Grid item xs={3}>
-                  <FormControl fullWidth variant="outlined">
+                  <FormControl fullWidth variant='outlined'>
                     <InputLabel>Unit</InputLabel>
                     <Select
-                      name="unit"
+                      name='unit'
                       value={ingredient.unit}
                       onChange={(e) => handleIngredientChange(index, e)}
                     >
-                      <MenuItem value="KG">KG</MenuItem>
-                      <MenuItem value="Grams">Grams</MenuItem>
-                      <MenuItem value="Milligrams">Milligrams</MenuItem>
+                      <MenuItem value='KG'>KG</MenuItem>
+                      <MenuItem value='Grams'>Grams</MenuItem>
+                      <MenuItem value='Milligrams'>Milligrams</MenuItem>
                     </Select>
                   </FormControl>
                 </Grid>
                 <Grid item xs={2}>
                   <TextField
-                    name="shelfLife"
-                    label="Shelf Life"
+                    name='shelfLife'
+                    label='Shelf Life'
                     value={ingredient.shelfLife}
                     onChange={(e) => handleIngredientChange(index, e)}
                     fullWidth
-                    variant="outlined"
+                    variant='outlined'
                   />
                 </Grid>
-                <Grid item xs={1} sx={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}>
-                  <IconButton onClick={() => removeIngredient(index)} color="error">
+                <Grid
+                  item
+                  xs={1}
+                  sx={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}
+                >
+                  <IconButton onClick={() => removeIngredient(index)} color='error'>
                     <DeleteOutlineIcon />
                   </IconButton>
                 </Grid>
               </React.Fragment>
             ))}
             <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-start', mt: 2 }}>
-              <Button startIcon={<AddCircleOutlineIcon />} onClick={addIngredient} variant="outlined">
+              <Button
+                startIcon={<AddCircleOutlineIcon />}
+                onClick={addIngredient}
+                variant='outlined'
+              >
                 Add Ingredient
               </Button>
             </Grid>
             <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-              <Button type="submit" variant="contained" color="primary">
+              <Button type='submit' variant='contained' color='primary'>
                 Save Recipe
               </Button>
             </Grid>

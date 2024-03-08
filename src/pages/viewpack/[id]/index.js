@@ -149,6 +149,19 @@ const PackDetail = () => {
         const ingredientResponse = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/ingridient/${token.ingredientID}`);
         const ingredient = ingredientResponse.data.data[0];
 
+        const payload = {
+          ingredient: token.ingredientID,
+          time_start: "2024-03-06 17:00:00",
+          time_stop: "2024-03-06 18:00:00"
+        };
+        await axios.post('https://potpan.zoku.space/measurements_per_ingredient/',payload) .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          console.error('Error making request:', error.response ? error.response.data : error.message);
+        });
+        
+
         setTokenData((prevData) => [
           ...prevData,
           {
