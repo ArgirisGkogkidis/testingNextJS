@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router'
 import { Box, Container, Typography, Grid, Card, CardContent, CardMedia, Skeleton } from '@mui/material';
-import { PackIngredientCard } from 'src/components/user/pack/view/PackIngredientCard';
+import PackIngredientCard from 'src/components/user/pack/view/PackIngredientCard';
 import axios from 'axios';
 import { format } from 'date-fns';
 import { v4 as uuid } from 'uuid'; // Ensure you have 'uuid' installed
@@ -84,7 +84,7 @@ import { v4 as uuid } from 'uuid'; // Ensure you have 'uuid' installed
 // }
 
 const PackDetail = () => {
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const router = useRouter();
   const { id } = router.query;
   const [tokenData, setTokenData] = useState([])
@@ -113,7 +113,7 @@ const PackDetail = () => {
 
       for (let token of packData.tokens) {
 
-        const firstHolderTimestamp = token.mintedOn;
+        const firstHolderTimestamp = token.parentMinted;
         let previousTimestamp = firstHolderTimestamp;
         const pastHoldersPromises = token.pastHolders.map(async (holder, index) => {
           if (holder.holderAddress === "0x0000000000000000000000000000000000000000") return null;
@@ -144,7 +144,7 @@ const PackDetail = () => {
         // Add the current holder string to the past holders array
         pastHolders.push(currentHolderString);
         pastHolders = pastHolders.join('\n');
-        console.log(tokenHolder)
+        console.log('Holders:', pastHolders)
         packHolder = tokenHolder;
         const ingredientResponse = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/ingridient/${token.ingredientID}`);
         const ingredient = ingredientResponse.data.data[0];
@@ -156,9 +156,7 @@ const PackDetail = () => {
             ref: token.tokenHash,
             ingredient: token.ingredientID,
             amount: `${milligramsToKilograms(token.amount) / packData.totalPacks} KG`,
-            customer: {
-              name: pastHolders || 'N/A', // Assuming you want to display past holders as customers
-            },
+            pastHolders: pastHolders || 'N/A', // Assuming you want to display past holders as customers
             createdAt: token.mintedOn * 1000,
             status: token.status === 1 ? 'ready' : (token.status === 2 ? 'transfered' : 'packed'),
             meta: { // Ensure this property is correctly populated

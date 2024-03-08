@@ -46,7 +46,16 @@ const IngredientSelection = (props) => {
 
     if (tknD[3] === accounts && Number(tknD[1]) === 1) {
       const data = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/ingridient/` + tknD[0]);
+      const hashToCheck = tknD[6];
+      const holders = await tracking.methods.getTokenPastHolders(hashToCheck).call();
+      const holder = await tracking.methods.getTokenPastHolderData(holders[holders.length - 1]).call();
+      console.log(holder)
+      const holderData = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/`, {
+        params: { wallet: holder[0] },
+      });
 
+      const user = holderData.data.data.user[0];
+      const userName = user.firstName + ' ' + user.lastName;
       setIngredients(prevPermisions => ([
         ...prevPermisions,
         {
@@ -56,6 +65,7 @@ const IngredientSelection = (props) => {
           amount: milligramsToKilograms(tknD[2]),
           icon: data.data.data[0]?.icon,
           name: data.data.data[0]?.name,
+          prevHolder: userName,
           createdAt: tknD[6] * 1000,
           status: Number(tknD[1]) === 1 ? 'ready' : (Number(tknD[1]) == 2 ? 'transfered' : 'packed'),
         }
@@ -124,6 +134,13 @@ const IngredientSelection = (props) => {
                   variant="body1"
                 >
                   Quantity (KG): {ingredient.amount}
+                </Typography>
+                <Typography
+                  align="center"
+                  color="textPrimary"
+                  variant="body1"
+                >
+                  Producer : {ingredient.prevHolder}
                 </Typography>
               </CardContent>
             </Card>

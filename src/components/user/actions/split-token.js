@@ -37,8 +37,11 @@ const SplitModal = ({ open, onClose, onSplit, token }) => {
     setSplitValue(newValue);
   };
 
+  // const milligramsToKilograms = (milligrams) => milligrams / 1e6;
+  const convertKgToMilligrams = (kg) => Math.round(kg * 1e6);
+
   const handleSubmit = () => {
-    onSplit(splitValue);
+    onSplit(convertKgToMilligrams(splitValue));
     // onClose(); // Optionally close the modal after submission
   };
 
@@ -48,6 +51,7 @@ const SplitModal = ({ open, onClose, onSplit, token }) => {
     if (open && token && token.amount) {
       setSplitValue(Number(token.amount) / 2); // Default to half of the token's amount, or any other logic
     }
+    console.log(token, splitValue)
   }, [open, token]);
 
   return (
@@ -74,8 +78,8 @@ const SplitModal = ({ open, onClose, onSplit, token }) => {
               onChange={handleSliderChange}
               aria-labelledby='split-amount-slider'
               valueLabelDisplay='auto'
-              step={1}
-              min={1}
+              step={0.01}
+              min={0.01}
               max={token ? Number(token.amount) : 100} // Assuming token.amount is the max value in kilos
             />
           </FormControl>

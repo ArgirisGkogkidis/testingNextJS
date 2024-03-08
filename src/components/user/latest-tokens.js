@@ -89,7 +89,7 @@ export const LatestTokens = (props) => {
           id: uuid(),
           ref: tokenHash,
           ingredient: Number(tknD[0]),
-          amount: milligramsToKilograms(tknD[2]) + ' KG',
+          amount: milligramsToKilograms(tknD[2]),
           customer: {
             name: data.data.data[0]?.name
           },
@@ -237,7 +237,7 @@ export const LatestTokens = (props) => {
                       {token.customer.name}
                     </TableCell>
                     <TableCell>
-                      {token.amount}
+                      {token.amount} KG
                     </TableCell>
                     <TableCell>
                       {format(token.createdAt, 'dd/MM/yyyy')}
