@@ -154,7 +154,8 @@ const PackDetail = () => {
           time_start: "2024-03-06 17:00:00",
           time_stop: "2024-03-06 18:00:00"
         };
-        await axios.post('https://potpan.zoku.space/measurements_per_ingredient/',payload) .then((response) => {
+        // await axios.post('https://potpan.zoku.space/measurements_per_ingredient/',payload) .then((response) => {
+        await axios.post('http://10.31.20.65/measurements_per_ingredient/',payload) .then((response) => {
           console.log(response);
         })
         .catch((error) => {
