@@ -231,7 +231,7 @@ export const LatestTokens = (props) => {
                     key={token.id}
                   >
                     <TableCell>
-                      ...{token.ref.slice(-8)}
+                      {token.ref.slice(-8)}
                     </TableCell>
                     <TableCell>
                       {token.customer.name}

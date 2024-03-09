@@ -168,14 +168,20 @@ const RecipeForm = (props) => {
               />
             </Grid>
             <Grid item xs={12}>
-              <TextField
-                name='totalUnits'
-                label='Total Units'
-                value={recipe.totalUnits}
-                onChange={handleRecipeChange}
-                fullWidth
-                variant='outlined'
-              />
+            <FormControl fullWidth variant="outlined">
+                <InputLabel id="totalUnits-label">Recipe Type</InputLabel>
+                <Select
+                  labelId="totalUnits-label"
+                  id="totalUnits"
+                  name="totalUnits"
+                  value={recipe.totalUnits}
+                  onChange={handleRecipeChange}
+                  label="Total Units"
+                >
+                  <MenuItem value="1">Cold</MenuItem>
+                  <MenuItem value="2">Cooked</MenuItem>
+                </Select>
+              </FormControl>
             </Grid>
             {recipe.ingredients.map((ingredient, index) => (
               <React.Fragment key={index}>
@@ -220,14 +226,14 @@ const RecipeForm = (props) => {
                   </FormControl>
                 </Grid>
                 <Grid item xs={2}>
-                  <TextField
+                  {/* <TextField
                     name='shelfLife'
                     label='Shelf Life'
                     value={ingredient.shelfLife}
                     onChange={(e) => handleIngredientChange(index, e)}
                     fullWidth
                     variant='outlined'
-                  />
+                  /> */}
                 </Grid>
                 <Grid
                   item
