@@ -8,7 +8,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 const dataColumns = [
-  { field: 'id',width: 50, },
+  { field: 'id', width: 50, },
   { field: 'tokenid', width: 250, },
   { field: 'tokenhash', width: 150 },
   { field: 'tokensender', width: 200 },
@@ -158,15 +158,18 @@ const PendingTokens = (props) => {
           >
             {selectionModel.length > 0 ? (
               <>
-                <Tooltip title='Delete'>
+                {/* <Tooltip title='Delete'>
                   <IconButton>
                     <DeleteIcon />
                   </IconButton>
-                </Tooltip>
+                </Tooltip> */}
                 <Tooltip title='Add'>
-                  <IconButton onClick={acceptToken}>
+                  {/* <IconButton onClick={acceptToken}>
                     <AddCircleIcon />
-                  </IconButton>
+                  </IconButton> */}
+                  <Button variant="contained" color="primary" onClick={acceptToken}>
+                    Accept Token(s)
+                  </Button>
                 </Tooltip>
               </>
             ) : (

@@ -92,12 +92,12 @@ export const DashboardLayout = (props) => {
 
       if (router.asPath.indexOf(tokenLink) != -1)
         return
-      enqueueSnackbar("Pending receive token", {
-        variant: 'info',
-        key: tokenLink,
-        persist: true,
-        action,
-      })
+      // enqueueSnackbar("Pending receive token", {
+      //   variant: 'info',
+      //   key: tokenLink,
+      //   persist: true,
+      //   action,
+      // })
     }
   }
 
