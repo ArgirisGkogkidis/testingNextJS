@@ -136,7 +136,6 @@ const PackDetail = () => {
   }, [id]);
   async function fetchData() {
     try {
-      console.log('will get for:', id);
       // Assuming this URL returns the packData structure shown earlier
       const packResponse = await axios.get(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/pack-info/${id}`,
@@ -146,14 +145,15 @@ const PackDetail = () => {
       const packHolder = '';
 
       let recipeName = 'nan'
-      try{
-        console.log(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/recipes/by-pack/${id}`)
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/recipes/by-pack/${id}`,
-      );
-      recipeName = response.data.title || 'A Salad';
+      let recipeId = -1;
+      try {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/recipes/by-pack/${id}`,
+        );
+        recipeName = response.data.title || 'A Salad';
+        recipeId = response.data.totalUnits;
       }
-      catch(error){console.log(error)}
+      catch (error) { console.log(error) }
 
       for (let token of packData.tokens) {
         const firstHolderTimestamp = token.parentMinted;
@@ -193,7 +193,7 @@ const PackDetail = () => {
         // Add the current holder string to the past holders array
         pastHolders.push(currentHolderString);
         pastHolders = pastHolders.join('\n');
-        console.log('Holders:', pastHolders);
+
         packHolder = tokenHolder;
         const ingredientResponse = await axios.get(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/ingridient/${token.ingredientID}`,
@@ -205,21 +205,6 @@ const PackDetail = () => {
           time_start: format(new Date(previousTimestamp * 1000), 'yyyy-MM-dd HH:mm:ss'),
           time_stop: format(new Date(Number(packData.createdOn) * 1000), 'yyyy-MM-dd HH:mm:ss'),
         };
-        console.log(payload);
-        // await axios
-        //   .post('https://potpan.zoku.space/measurements_per_ingredient/', payload)
-        //   .then((response) => {
-        //     // await axios.post('http://10.31.20.65/measurements_per_ingredient/',payload) .then((response) => {
-        //     console.log(response);
-        //     measurement = response.measurements;
-        //   })
-        //   .catch((error) => {
-        //     measurement = measurements;
-        //     console.error(
-        //       'Error making request:',
-        //       error.response ? error.response.data : error.message,
-        //     );
-        //   });
 
         let measurement = ''; // Use let for variables that will be reassigned.
 
@@ -228,10 +213,31 @@ const PackDetail = () => {
             'https://potpan.zoku.space/measurements_per_ingredient/',
             payload,
           );
-          console.log(response);
+
           measurement = response.data.measurements; // Make sure to access .data for the response payload
         } catch (error) {
           measurement = sensorData.measurements; // Assign default values in case of error
+          console.error(
+            'Error making request:',
+            error.response ? error.response.data : error.message,
+          );
+        }
+
+        try {
+          payload =
+          {
+            category: recipeId,
+            time_start: format(new Date(previousTimestamp * 1000), 'yyyy-MM-dd HH:mm:ss'),
+            time_stop: format(new Date(Number(packData.createdOn) * 1000), 'yyyy-MM-dd HH:mm:ss'),
+          };
+          const response = await axios.post(
+            'https://potpan.zoku.space/measurements_per_recipie/',
+            payload,
+          );
+          console.log('YOLO', measurement);
+          measurement = measurement.concat(response.data.measurements); // Make sure to access .data for the response payload
+        } catch (error) {
+          // measurement = sensorData.measurements; // Assign default values in case of error
           console.error(
             'Error making request:',
             error.response ? error.response.data : error.message,
