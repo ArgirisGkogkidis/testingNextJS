@@ -9,11 +9,16 @@ import {
   CardContent,
   CardMedia,
   Skeleton,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  useTheme
 } from '@mui/material';
 import PackIngredientCard from 'src/components/user/pack/view/PackIngredientCard';
 import axios from 'axios';
 import { format } from 'date-fns';
 import { v4 as uuid } from 'uuid'; // Ensure you have 'uuid' installed
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 // const packData = {
 //   "packHash": "0x0be47726aee44389eb1a1f93dbd222873c1ceca6ebfe6cb96d3705a3fb482919",
@@ -146,6 +151,8 @@ const PackDetail = () => {
 
       let recipeName = 'nan'
       let recipeId = -1;
+      let saladMeasurment = [];
+
       try {
         const response = await axios.get(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/recipes/by-pack/${id}`,
@@ -234,8 +241,7 @@ const PackDetail = () => {
             'https://potpan.zoku.space/measurements_per_recipie/',
             payload,
           );
-          console.log('YOLO', measurement);
-          measurement = measurement.concat(response.data.measurements); // Make sure to access .data for the response payload
+          saladMeasurment = response.data.measurements; // Make sure to access .data for the response payload
         } catch (error) {
           // measurement = sensorData.measurements; // Assign default values in case of error
           console.error(
@@ -268,6 +274,7 @@ const PackDetail = () => {
         ...packData,
         holder: packHolder,
         resipeName: recipeName,
+        saladmeasurement: saladMeasurment,
         _createdOn: Number(packData.createdOn) * 1000,
       };
 
@@ -321,6 +328,39 @@ const PackDetail = () => {
                   <Typography sx={{ m: 1 }} variant='body1'>
                     Total products made: ({packData.totalPacks})
                   </Typography>
+                  <Accordion>
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls='panel-measurements-content'
+                      id='panel-measurements-header'
+                    >
+                      <Typography>Measurements</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <Grid container spacing={2}>
+                        {packData.saladmeasurement.map((measurement, index) => (
+                          <Grid item xs={12} key={index}>
+                            <Card variant='outlined'>
+                              <CardContent>
+                                <Typography variant='h6' component='h2'>
+                                  Stage: {measurement.stage}
+                                </Typography>
+                                <Typography color='textSecondary'>
+                                  Temperature (°C):<br></br> Min: {measurement.temp_min.toFixed(2)}<br></br> Avg:{' '}
+                                  {measurement.temp_avg.toFixed(2)}<br></br> Max: {measurement.temp_max.toFixed(2)}
+                                </Typography>
+                                <br></br>
+                                <Typography color='textSecondary'>
+                                  Humidity (%):<br></br> Min: {measurement.hum_min.toFixed(2)}<br></br> Avg:{' '}
+                                  {measurement.hum_avg.toFixed(2)}<br></br>Max: {measurement.hum_max.toFixed(2)}
+                                </Typography>
+                              </CardContent>
+                            </Card>
+                          </Grid>
+                        ))}
+                      </Grid>
+                    </AccordionDetails>
+                  </Accordion>
                 </CardContent>
               </Card>
               <Box
