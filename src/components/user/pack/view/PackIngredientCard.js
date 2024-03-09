@@ -15,6 +15,14 @@ import {
   ListItem,
   ListItemText,
   useTheme,
+
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Paper,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ClockIcon from '@mui/icons-material/AccessTime'; // Adjust as needed
@@ -114,7 +122,7 @@ const PackIngredientCard = ({ product, ...rest }) => {
           </Accordion>
 
           {/* Measurements Accordion */}
-          <Accordion>
+          {/* <Accordion>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls='panel-measurements-content'
@@ -150,7 +158,7 @@ const PackIngredientCard = ({ product, ...rest }) => {
                 ))}
               </Grid>
             </AccordionDetails>
-          </Accordion>
+          </Accordion> */}
 
           <Accordion>
             <AccordionSummary
@@ -158,7 +166,7 @@ const PackIngredientCard = ({ product, ...rest }) => {
               aria-controls='panel-measurements-content'
               id='panel-measurements-header'
             >
-              <Typography>Measurements 2</Typography>
+              <Typography>Measurements</Typography>
             </AccordionSummary>
             <AccordionDetails>
               <Grid container spacing={2}>
@@ -170,12 +178,13 @@ const PackIngredientCard = ({ product, ...rest }) => {
                           Stage: {measurement.stage}
                         </Typography>
                         <Typography color='textSecondary'>
-                          Temperature (°C): Min: {measurement.temp_min.toFixed(2)}, Avg:{' '}
-                          {measurement.temp_avg.toFixed(2)}, Max: {measurement.temp_max.toFixed(2)}
+                          Temperature (°C):<br></br> Min: {measurement.temp_min.toFixed(2)}<br></br> Avg:{' '}
+                          {measurement.temp_avg.toFixed(2)}<br></br> Max: {measurement.temp_max.toFixed(2)}
                         </Typography>
+                        <br></br>
                         <Typography color='textSecondary'>
-                          Humidity (%): Min: {measurement.hum_min.toFixed(2)}, Avg:{' '}
-                          {measurement.hum_avg.toFixed(2)}, Max: {measurement.hum_max.toFixed(2)}
+                          Humidity (%):<br></br> Min: {measurement.hum_min.toFixed(2)}<br></br> Avg:{' '}
+                          {measurement.hum_avg.toFixed(2)}<br></br>Max: {measurement.hum_max.toFixed(2)}
                         </Typography>
                       </CardContent>
                     </Card>
@@ -185,45 +194,65 @@ const PackIngredientCard = ({ product, ...rest }) => {
             </AccordionDetails>
           </Accordion>
 
-          <Accordion>
+          {/* <Accordion>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
-              aria-controls='panel-measurements-content'
-              id='panel-measurements-header'
+              aria-controls="panel-measurements-content"
+              id="panel-measurements-header"
             >
-              <Typography variant='subtitle1'>Measurements 3</Typography>
+              <Typography>Measurements Split by Stage and Type</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <Grid container spacing={2}>
-                {product.measurements.map((measurement, index) => (
-                  <Grid item xs={12} key={index}>
-                    <Card variant='outlined'>
-                      <CardContent>
-                        <Typography gutterBottom variant='h6' component='div' color='primary'>
-                          Stage: {measurement.stage}
-                        </Typography>
-                        <Divider light />
-                        <MeasurementSection
-                          icon={<ThermostatIcon color='primary' />}
-                          title='Temperature'
-                          min={measurement.temp_min}
-                          max={measurement.temp_max}
-                          avg={measurement.temp_avg}
-                        />
-                        <MeasurementSection
-                          icon={<OpacityIcon color='primary' />}
-                          title='Humidity'
-                          min={measurement.hum_min}
-                          max={measurement.hum_max}
-                          avg={measurement.hum_avg}
-                        />
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                ))}
-              </Grid>
+              {product.measurements.map((measurement, index) => (
+                <div key={index}>
+                  <Typography variant="h6" gutterBottom>
+                    Stage: {measurement.stage}
+                  </Typography>
+                  <TableContainer component={Paper} style={{ marginBottom: 16 }}>
+                    <Table aria-label={`Temperature Measurements for Stage ${measurement.stage}`}>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Type</TableCell>
+                          <TableCell align="right">Min (°C)</TableCell>
+                          <TableCell align="right">Avg (°C)</TableCell>
+                          <TableCell align="right">Max (°C)</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        <TableRow>
+                          <TableCell component="th" scope="row">Temperature</TableCell>
+                          <TableCell align="right">{measurement.temp_min.toFixed(2)}</TableCell>
+                          <TableCell align="right">{measurement.temp_avg.toFixed(2)}</TableCell>
+                          <TableCell align="right">{measurement.temp_max.toFixed(2)}</TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                  <TableContainer component={Paper}>
+                    <Table aria-label={`Humidity Measurements for Stage ${measurement.stage}`}>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Type</TableCell>
+                          <TableCell align="right">Min (%)</TableCell>
+                          <TableCell align="right">Avg (%)</TableCell>
+                          <TableCell align="right">Max (%)</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        <TableRow>
+                          <TableCell component="th" scope="row">Humidity</TableCell>
+                          <TableCell align="right">{measurement.hum_min.toFixed(2)}</TableCell>
+                          <TableCell align="right">{measurement.hum_avg.toFixed(2)}</TableCell>
+                          <TableCell align="right">{measurement.hum_max.toFixed(2)}</TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </div>
+              ))}
             </AccordionDetails>
-          </Accordion>
+          </Accordion> */}
+
           {/* <Typography color='textSecondary' display='inline' sx={{ pl: 1, mt: 2 }} variant='body2'>
             <ClockIcon color='action' />
             Created: {format(new Date(product.createdAt), 'HH:mm:ss dd/MM/yyyy')}
