@@ -11,6 +11,7 @@ import { Users as UsersIcon } from '../icons/users';
 import { XCircle as XCircleIcon } from '../icons/x-circle';
 import { Logo } from './logo';
 import { NavItem } from './nav-item';
+import Image from 'next/image' // Import the Image component from Next.js
 
 import GetAppIcon from '@mui/icons-material/GetApp';
 import DataSaverOnIcon from '@mui/icons-material/DataSaverOn';
@@ -227,6 +228,7 @@ export const DashboardSidebar = (props) => {
           }
         </Box>
         <Divider sx={{ borderColor: '#2D3748' }} />
+        <Image src="/static/images/eu_logo.png" alt="Floating Image" width={300} height={'100'} />
       </Box>
     </>
   );

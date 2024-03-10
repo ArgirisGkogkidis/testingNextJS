@@ -84,12 +84,12 @@ const TransferModal = ({ open, onClose, onTransfer, token, management }) => {
               margin="normal"
             /> */}
             <FormControl component='fieldset' sx={{ mt: 2, width: '100%' }}>
-              <InputLabel id="token-id-select-label">Token ID to Mint</InputLabel>
+              <InputLabel id="token-id-select-label">Select User to transfer</InputLabel>
               <Select
                 labelId="token-id-select-label"
                 id="recipient-address"
                 value={recipientAddress}
-                label="Token ID to Mint"
+                label="User to transfer token to"
                 onChange={handleRecipientChange}
               >
                 {recipientOptions.map((option) => (
