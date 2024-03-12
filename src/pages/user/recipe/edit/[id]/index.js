@@ -124,7 +124,8 @@ const RecipeForm = (props) => {
 
     console.log(recipeToSave);
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/recipes`, recipeToSave);
+      await axios.put(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/recipes/${id}`, recipeToSave);
+      router.push('/user/recipe');
       // Handle success - e.g., clear the form, show a message
     } catch (error) {
       alert(error);

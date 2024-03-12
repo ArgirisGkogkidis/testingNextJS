@@ -7,8 +7,10 @@ import {
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import axios from 'axios';
+import { useRouter } from 'next/router';
 
 const RecipeForm = (props) => {
+  const router = useRouter();
   const { accounts } = props
   const [recipe, setRecipe] = useState({
     title: '',
@@ -75,6 +77,7 @@ const RecipeForm = (props) => {
     try {
       await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/recipes`, recipeToSave);
       // Handle success - e.g., clear the form, show a message
+      router.push('/user/recipe');
     } catch (error) {
       alert(error)
     }
