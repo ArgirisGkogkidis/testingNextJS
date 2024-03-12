@@ -125,7 +125,7 @@ const ViewPacks = (props) => {
               <QRCode
                 id={`qr-${superPack.internalPackHashes[0]}`}
                 value={`https://foodchain.isl.edu.gr/viewpack/${superPack.internalPackHashes[0]}`}
-                size={128}
+                size={250}
                 level={'H'}
                 includeMargin={true}
               />
