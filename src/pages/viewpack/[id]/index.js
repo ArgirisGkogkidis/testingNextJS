@@ -256,7 +256,7 @@ const PackDetail = () => {
             id: uuid(),
             ref: token.tokenHash,
             ingredient: token.ingredientID,
-            amount: `${milligramsToKilograms(token.amount) / packData.totalPacks} KG`,
+            amount: `${(milligramsToKilograms(token.amount) / packData.totalPacks).toFixed(3)} KG`,
             pastHolders: pastHolders || 'N/A', // Assuming you want to display past holders as customers
             createdAt: token.mintedOn * 1000,
             status: token.status === 1 ? 'ready' : token.status === 2 ? 'transfered' : 'packed',
